@@ -1,0 +1,6 @@
+{
+  "name": "Checklist Tugas & Hafalan Harian Realtime",
+  "description": "Aplikasi checklist tugas harian dan mutaba'ah siswa (identitas nama siswa, tes hafalan suara & tajwid AI, pekerjaan rumah, Surat Juz 30, 36 Hadits, 36 Doa Harian, Sholat) dengan pemilih tanggal, pengingat push notification, dan penyimpanan fleksibel (Supabase Database, Custom REST API, Cloud Server Bawaan).",
+  "requestFramePermissions": ["notifications", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
