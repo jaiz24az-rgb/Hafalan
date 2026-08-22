@@ -302,6 +302,44 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                     </p>
                   )}
 
+                  {/* Quran Surah Ayah Progress Pill */}
+                  {item.category === 'surat' && (
+                    <div
+                      onClick={() => onOpenDetailModal(item)}
+                      className="mt-2.5 flex items-center justify-between p-2 rounded-xl bg-emerald-50/80 border border-emerald-200/80 hover:bg-emerald-100/70 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-1.5 text-xs text-emerald-900">
+                        <span className="font-bold">📖 Hafalan Ayat:</span>
+                        {progress.completedAyahs && progress.completedAyahs.length > 0 ? (
+                          <span className="font-semibold text-emerald-700">
+                            {progress.completedAyahs.length} / {progress.totalAyahsCount || item.targetRange?.replace(/\D/g, '') || '?'} Ayat
+                          </span>
+                        ) : (
+                          <span className="text-slate-500 text-[11px]">Belum dicentang per ayat</span>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-0.5">
+                        Buka Ayat →
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Hadits Practice Shortcut Pill */}
+                  {item.category === 'hadits' && (
+                    <div
+                      onClick={() => onOpenDetailModal(item)}
+                      className="mt-2.5 flex items-center justify-between p-2 rounded-xl bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100/70 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-1.5 text-xs text-amber-900">
+                        <span className="font-bold">🎯 Latihan Hafalan:</span>
+                        <span className="text-[11px] text-amber-800">Potongan Frasa & Kuis</span>
+                      </div>
+                      <span className="text-[11px] font-bold text-amber-700 flex items-center gap-0.5">
+                        Mulai Latihan →
+                      </span>
+                    </div>
+                  )}
+
                   {/* AI Voice Test Result Badge if tested */}
                   {progress.lastTestScore !== undefined && (
                     <div className="mt-2.5 flex items-center justify-between bg-amber-50/80 border border-amber-200 px-2.5 py-1.5 rounded-lg text-xs">

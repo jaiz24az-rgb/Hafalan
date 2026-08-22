@@ -24,6 +24,20 @@ export type CompletionStatus =
   | 'mutqin'
   | 'selesai';
 
+export interface QuranAyah {
+  number: number;
+  arabic: string;
+  latin: string;
+  translation: string;
+}
+
+export interface HadithChunk {
+  step: number;
+  arabic: string;
+  latin: string;
+  translation: string;
+}
+
 export interface ChecklistItem {
   id: string;
   number?: number;
@@ -39,6 +53,10 @@ export interface ChecklistItem {
   defaultTime?: string;
   isCustom?: boolean;
   priority?: 'low' | 'medium' | 'high';
+  totalAyahs?: number;
+  ayahs?: QuranAyah[];
+  hadithChunks?: HadithChunk[];
+  keywords?: string[];
 }
 
 export interface ItemProgress {
@@ -48,6 +66,9 @@ export interface ItemProgress {
   note?: string;
   paraf?: string;
   rating?: number; // 1-5 bintang
+  completedAyahs?: number[]; // Daftar nomor ayat yang sudah dihafal e.g. [1, 2, 3, 4]
+  lastAyahMemorized?: number; // Ayat terakhir yang dihafal e.g. 15
+  totalAyahsCount?: number;
   lastTestScore?: number;
   lastTestGrade?: string;
   lastTestedAt?: string;

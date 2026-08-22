@@ -134,6 +134,10 @@ class AudioNotificationEngine {
     }
   }
 
+  playCelebrationSound() {
+    this.playVictorySound();
+  }
+
   // Success / Checklist Checked Audio
   playCheckSound() {
     try {

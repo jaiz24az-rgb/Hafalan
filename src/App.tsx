@@ -306,18 +306,26 @@ export default function App() {
     completed: boolean,
     status: CompletionStatus,
     note: string,
-    paraf: string
+    paraf: string,
+    completedAyahs?: number[],
+    lastAyahMemorized?: number,
+    totalAyahsCount?: number
   ) => {
+    const existing = records[currentDate]?.[itemId] || {};
     const updatedRecords: AppRecords = {
       ...records,
       [currentDate]: {
         ...(records[currentDate] || {}),
         [itemId]: {
+          ...existing,
           completed,
           status,
           note,
           paraf,
-          completedAt: completed ? new Date().toISOString() : undefined
+          completedAyahs: completedAyahs !== undefined ? completedAyahs : existing.completedAyahs,
+          lastAyahMemorized: lastAyahMemorized !== undefined ? lastAyahMemorized : existing.lastAyahMemorized,
+          totalAyahsCount: totalAyahsCount !== undefined ? totalAyahsCount : existing.totalAyahsCount,
+          completedAt: completed ? (existing.completedAt || new Date().toISOString()) : undefined
         }
       }
     };
