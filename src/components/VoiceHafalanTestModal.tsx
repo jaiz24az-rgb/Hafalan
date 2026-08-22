@@ -133,6 +133,13 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
     }
     setRecordDuration(0);
 
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setErrorMsg(
+        'Browser atau perangkat ini tidak mendukung akses mikrofon langsung (atau memerlukan koneksi HTTPS aman). Anda dapat menggunakan tab "Unggah Audio" atau "Uji Teks" untuk tetap menguji hafalan.'
+      );
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -201,11 +208,36 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
         setRecordDuration((prev) => prev + 1);
       }, 1000);
     } catch (err: unknown) {
-      console.error('Microphone access error:', err);
-      setErrorMsg(
-        'Izin mikrofon terhalang sistem Android / browser. Jika muncul pesan "Tutup balon atau overlay", silakan geser/tutup ikon mengambang di layar (seperti balon chat WhatsApp/Messenger, Game Turbo, atau Bola Bantuan), lalu coba lagi — atau gunakan opsi "Unggah Audio" / "Uji Teks".'
-      );
+      stopRecordingCleanup();
       setIsRecording(false);
+
+      const errObj = err as Error | { name?: string; message?: string };
+      const errName = errObj?.name || '';
+      const errMsg = String(errObj?.message || '');
+
+      console.warn('Microphone permission info:', errName, errMsg);
+
+      if (
+        errName === 'NotAllowedError' ||
+        errName === 'PermissionDeniedError' ||
+        errName === 'AbortError' ||
+        errMsg.toLowerCase().includes('dismissed') ||
+        errMsg.toLowerCase().includes('denied') ||
+        errMsg.toLowerCase().includes('permission') ||
+        errMsg.toLowerCase().includes('overlay')
+      ) {
+        setErrorMsg(
+          'Izin mikrofon dibatalkan atau terhalang sistem Android / overlay. Jika muncul pesan sistem "Tutup balon atau overlay", tutup/geser balon chat WhatsApp/Messenger atau Game Turbo di layar, lalu klik "Coba Rekam Lagi" atau gunakan tab "Unggah Audio".'
+        );
+      } else if (errName === 'NotFoundError' || errName === 'DevicesNotFoundError') {
+        setErrorMsg('Perangkat mikrofon tidak terdeteksi. Silakan gunakan tab "Unggah Audio" atau "Uji Teks".');
+      } else if (errName === 'NotReadableError' || errName === 'TrackStartError') {
+        setErrorMsg('Mikrofon sedang dipakai aplikasi lain (misal panggilan WhatsApp / telepon). Harap tutup aplikasi tersebut lalu coba lagi.');
+      } else {
+        setErrorMsg(
+          'Tidak dapat mengakses mikrofon (' + (errName || 'Izin ditolak') + '). Anda tetap dapat menguji hafalan menggunakan tab "Unggah Audio" atau "Uji Teks".'
+        );
+      }
     }
   };
 
@@ -290,14 +322,16 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
 
       if (audioBlob) {
         mimeType = audioBlob.type || 'audio/webm';
-        const buffer = await audioBlob.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        let binary = '';
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-          binary += String.fromCharCode(bytes[i]);
-        }
-        audioBase64 = btoa(binary);
+        audioBase64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const result = reader.result as string;
+            const base64Data = result.includes(',') ? result.split(',')[1] : result;
+            resolve(base64Data);
+          };
+          reader.onerror = () => reject(new Error('Gagal membaca data audio.'));
+          reader.readAsDataURL(audioBlob);
+        });
       }
 
       const response = await fetch('/api/hafalan/test-voice', {
