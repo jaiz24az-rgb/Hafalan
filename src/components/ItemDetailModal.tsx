@@ -75,7 +75,14 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
               {item.title}
             </h3>
             {item.sourceOrNotes && (
-              <p className="text-xs text-emerald-200">{item.sourceOrNotes}</p>
+              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                {item.sourceOrNotes.toLowerCase().includes('tarjih') && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-950/50 text-emerald-200 text-[10px] font-semibold border border-emerald-400/20">
+                    📖 Putusan Tarjih Muhammadiyah
+                  </span>
+                )}
+                <p className="text-xs text-emerald-200/90">{item.sourceOrNotes}</p>
+              </div>
             )}
           </div>
 

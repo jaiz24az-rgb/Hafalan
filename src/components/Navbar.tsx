@@ -104,6 +104,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     Mutaba'ah Siswa Hebat
                     <Sparkles className="w-4 h-4 text-amber-500" />
                   </h1>
+                  <span className="hidden lg:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold">
+                    📖 Putusan Tarjih Muhammadiyah
+                  </span>
                 </div>
                 {/* Student Name Quick Button */}
                 <button
