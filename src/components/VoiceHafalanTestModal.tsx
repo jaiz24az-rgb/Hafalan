@@ -203,7 +203,7 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
     } catch (err: unknown) {
       console.error('Microphone access error:', err);
       setErrorMsg(
-        'Tidak dapat mengakses mikrofon. Pastikan Anda telah memberikan izin mikrofon pada browser, atau gunakan opsi unggah audio.'
+        'Izin mikrofon terhalang sistem Android / browser. Jika muncul pesan "Tutup balon atau overlay", silakan geser/tutup ikon mengambang di layar (seperti balon chat WhatsApp/Messenger, Game Turbo, atau Bola Bantuan), lalu coba lagi — atau gunakan opsi "Unggah Audio" / "Uji Teks".'
       );
       setIsRecording(false);
     }
@@ -788,11 +788,69 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
                 </div>
               )}
 
-              {/* Error Message */}
+              {/* Error Message & Troubleshooting */}
               {errorMsg && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span>{errorMsg}</span>
+                <div className="p-4 bg-amber-50/90 border border-amber-300/80 rounded-2xl text-slate-800 text-xs space-y-3 shadow-xs">
+                  <div className="flex items-start gap-2.5">
+                    <AlertCircle className="w-5 h-5 shrink-0 text-amber-600 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="font-bold text-amber-900">Kendala Izin Mikrofon Android:</p>
+                      <p className="text-amber-800 leading-relaxed">{errorMsg}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white/80 rounded-xl border border-amber-200 text-[11px] text-slate-700 space-y-1.5">
+                    <p className="font-semibold text-emerald-900 flex items-center gap-1">
+                      💡 Cara Mengatasi Peringatan Android:
+                    </p>
+                    <ol className="list-decimal list-inside space-y-1 text-slate-600 pl-1">
+                      <li>
+                        <strong>Tutup balon/ikon melayang:</strong> Seret/hapus balon chat WhatsApp/Messenger, ikon perekam layar, atau Bola Bantuan (Assistive Touch) ke bagian bawah layar.
+                      </li>
+                      <li>
+                        Lalu tekan tombol <strong>"Coba lagi"</strong> pada dialog izin Android Anda.
+                      </li>
+                      <li>
+                        Atau pilih alternatif mudah di bawah ini tanpa perlu izin mic:
+                      </li>
+                    </ol>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setErrorMsg(null);
+                        setTestMode('upload');
+                      }}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      Gunakan Opsi Unggah Audio
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setErrorMsg(null);
+                        setTestMode('text');
+                      }}
+                      className="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-slate-600" />
+                      Gunakan Uji Teks
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setErrorMsg(null);
+                        startRecording();
+                      }}
+                      className="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Coba Rekam Lagi
+                    </button>
+                  </div>
                 </div>
               )}
 
