@@ -5,29 +5,55 @@ export interface QariOption {
   name: string;
   subname: string;
   folder: string;
+  isChildFriendly?: boolean;
+  isUmmiStyle?: boolean;
   recommendedFor: string;
 }
 
 export const QARI_LIST: QariOption[] = [
   {
-    id: 'husary',
-    name: 'Syaikh Mahmud Khalil Al-Husary',
-    subname: 'Tartil Muallim',
-    folder: 'Husary_128kbps',
-    recommendedFor: 'Sangat direkomendasikan untuk belajar makhraj & tajwid presisi'
+    id: 'ummi_minshawy_teacher',
+    name: 'Metode Ummi / Talaqqi Anak (Al-Minsyawi & Santri Cilik)',
+    subname: 'Guru Membaca & Suara Anak Mengulang',
+    folder: 'Minshawy_Teacher_128kbps',
+    isChildFriendly: true,
+    isUmmiStyle: true,
+    recommendedFor: 'Metode Ummi & Talaqqi: Guru melafalkan ayat lalu diulang oleh paduan suara anak-anak'
+  },
+  {
+    id: 'husary_muallim',
+    name: 'Talaqqi Kelas Anak (Al-Husary & Paduan Santri)',
+    subname: 'Makhraj Tajwid & Suara Murid',
+    folder: 'Husary_Muallim_128kbps',
+    isChildFriendly: true,
+    isUmmiStyle: true,
+    recommendedFor: 'Talaqqi interaktif: Guru membacakan fashahah tajwid lalu diikuti santri anak'
   },
   {
     id: 'alafasy',
     name: 'Syaikh Misyari Rasyid Al-Afasy',
-    subname: 'Murottal Populer',
+    subname: 'Murottal Irama Lembut Ramah Anak',
     folder: 'Alafasy_128kbps',
-    recommendedFor: 'Irama merdu dan mudah diikuti siswa'
+    isChildFriendly: true,
+    isUmmiStyle: false,
+    recommendedFor: 'Irama merdu, vokal jelas dan sangat disukai anak-anak'
+  },
+  {
+    id: 'husary',
+    name: 'Syaikh Mahmud Khalil Al-Husary',
+    subname: 'Tartil Muallim Solo',
+    folder: 'Husary_128kbps',
+    isChildFriendly: false,
+    isUmmiStyle: false,
+    recommendedFor: 'Standar emas makhorijul huruf & hukum tajwid presisi'
   },
   {
     id: 'minshawy',
     name: 'Syaikh Muhammad Shiddiq Al-Minsyawi',
-    subname: 'Tartil Khusyuk',
+    subname: 'Tartil Khusyuk Solo',
     folder: 'Minshawy_Murattal_128kbps',
+    isChildFriendly: false,
+    isUmmiStyle: false,
     recommendedFor: 'Tartil klasik dengan penghayatan makna yang mendalam'
   },
   {
@@ -35,6 +61,8 @@ export const QARI_LIST: QariOption[] = [
     name: 'Syaikh Ali Al-Hudzaify',
     subname: 'Imam Masjid Nabawi',
     folder: 'Hudaify_128kbps',
+    isChildFriendly: false,
+    isUmmiStyle: false,
     recommendedFor: 'Tempo stabil dan waqaf-ibtida yang sangat rapi'
   }
 ];
@@ -43,7 +71,7 @@ export function formatThreeDigits(num: number): string {
   return String(num).padStart(3, '0');
 }
 
-export function getQuranAyahAudioUrl(surahNumber: number, ayahNumber: number, qariFolder: string = 'Husary_128kbps'): string {
+export function getQuranAyahAudioUrl(surahNumber: number, ayahNumber: number, qariFolder: string = 'Minshawy_Teacher_128kbps'): string {
   const surahStr = formatThreeDigits(surahNumber);
   const ayahStr = formatThreeDigits(ayahNumber);
   return `https://everyayah.com/data/${qariFolder}/${surahStr}${ayahStr}.mp3`;
@@ -96,7 +124,7 @@ export class AudioLearningEngine {
     this.stopAll();
 
     const {
-      qariFolder = 'Husary_128kbps',
+      qariFolder = 'Minshawy_Teacher_128kbps',
       speed = 1.0,
       repeatCount = 1,
       onStart,
@@ -137,7 +165,7 @@ export class AudioLearningEngine {
 
     audio.onended = () => {
       if (playedTimes < targetRep) {
-        // Small pause between repetitions for better learning assimilation (600ms)
+        // Pause between repetitions for better learning assimilation (600ms)
         setTimeout(() => {
           if (this.currentAudio === audio) {
             playNextRepetition();
@@ -216,7 +244,7 @@ export class AudioLearningEngine {
       utterance.lang = 'ar-SA';
       // Rate calibration: 0.75x = 0.75, 1.0x = 0.88, 1.25x = 1.05 for natural Arabic pacing
       utterance.rate = speed === 0.75 ? 0.7 : speed === 1.25 ? 1.05 : 0.85;
-      utterance.pitch = 1.0;
+      utterance.pitch = 1.1; // Slightly higher pitch for child/learner friendliness
 
       // Try finding Arabic voice if installed
       const voices = window.speechSynthesis.getVoices();

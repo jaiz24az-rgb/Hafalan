@@ -20,7 +20,9 @@ import {
   Headphones,
   SkipForward,
   SkipBack,
-  VolumeX
+  VolumeX,
+  Info,
+  HelpCircle
 } from 'lucide-react';
 import { QuranAyah } from '../types';
 import { audioEngine } from '../utils/soundAndNotification';
@@ -61,14 +63,15 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
   const [hideTranslationAll, setHideTranslationAll] = useState(false);
   const [filterMode, setFilterMode] = useState<'all' | 'uncompleted' | 'completed'>('all');
 
-  // Audio Learning Player State
-  const [selectedQariFolder, setSelectedQariFolder] = useState<string>('Husary_128kbps');
+  // Audio Learning Player State (Default to Metode Ummi & Suara Anak Mengulang)
+  const [selectedQariFolder, setSelectedQariFolder] = useState<string>('Minshawy_Teacher_128kbps');
   const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(1.0);
   const [repeatMode, setRepeatMode] = useState<RepeatCount>(1);
   const [currentPlayingAyah, setCurrentPlayingAyah] = useState<number | null>(null);
   const [isPlayingContinuous, setIsPlayingContinuous] = useState<boolean>(false);
   const [currentRepetition, setCurrentRepetition] = useState<{ current: number; total: number }>({ current: 1, total: 1 });
   const [audioError, setAudioError] = useState<string | null>(null);
+  const [showUmmiGuide, setShowUmmiGuide] = useState<boolean>(false);
 
   const totalAyahs = ayahs.length;
   const completedCount = completedAyahs.length;
@@ -281,24 +284,94 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
             </div>
           </div>
 
-          {/* Qari Selector Dropdown */}
+          {/* Qari Selector Dropdown & Ummi Info Toggle */}
           <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setShowUmmiGuide(!showUmmiGuide)}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 text-xs font-bold transition-colors cursor-pointer border border-amber-400/30"
+              title="Panduan Kaidah Nada & Metode Ummi"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Metode Ummi</span>
+            </button>
+
             <select
               value={selectedQariFolder}
               onChange={(e) => {
                 stopAudio();
                 setSelectedQariFolder(e.target.value);
               }}
-              className="bg-emerald-950/80 border border-emerald-600/50 text-white text-xs rounded-xl px-2.5 py-1.5 font-medium focus:ring-2 focus:ring-emerald-400 cursor-pointer"
+              className="bg-emerald-950/80 border border-emerald-600/50 text-white text-xs rounded-xl px-2.5 py-1.5 font-medium focus:ring-2 focus:ring-emerald-400 cursor-pointer max-w-[220px] sm:max-w-none"
             >
               {QARI_LIST.map((qari) => (
                 <option key={qari.id} value={qari.folder} className="bg-slate-900 text-white">
-                  🎙️ {qari.name} ({qari.subname})
+                  {qari.isUmmiStyle ? '👦' : '🎙️'} {qari.name}
                 </option>
               ))}
             </select>
           </div>
         </div>
+
+        {/* Quick Style Chips */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+          <span className="text-[11px] font-semibold text-emerald-300 mr-1">Pilihan Suara:</span>
+          {QARI_LIST.map((q) => (
+            <button
+              key={`quick-${q.id}`}
+              type="button"
+              onClick={() => {
+                stopAudio();
+                setSelectedQariFolder(q.folder);
+              }}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                selectedQariFolder === q.folder
+                  ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-xs font-bold'
+                  : 'bg-emerald-900/40 hover:bg-emerald-800/60 text-emerald-200 border-emerald-700/40'
+              }`}
+            >
+              {q.isUmmiStyle ? '👦' : '🎙️'} {q.subname}
+            </button>
+          ))}
+        </div>
+
+        {/* Metode Ummi Learning Guide Banner */}
+        {showUmmiGuide && (
+          <div className="bg-gradient-to-r from-amber-950/80 to-emerald-950/80 p-3.5 rounded-xl border border-amber-500/40 text-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-amber-300 font-bold">
+                <Info className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Kaidah Pembelajaran Metode Ummi (Talaqqi & Irama Rost)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowUmmiGuide(false)}
+                className="text-amber-300/80 hover:text-amber-200 text-[11px] underline cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+            
+            <p className="text-[11px] text-amber-100/90 leading-relaxed">
+              Metode Ummi menggunakan pendekatan <strong>Talaqqi & Musyafahah</strong> (Guru membaca ayat dengan fasih dan tartil, kemudian diikuti suara anak-anak yang menirukan bersama). Audio suara anak di atas mencontohkan pengulangan langsung per ayat.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+              <div className="bg-emerald-900/40 p-2 rounded-lg border border-emerald-600/30">
+                <span className="text-[10px] font-bold text-amber-300 block">1. Nada Naik (Tinggi) ↗️</span>
+                <span className="text-[10px] text-slate-300">Dipakai pada potongan awal ayat pertama atau kalimat pembuka</span>
+              </div>
+              <div className="bg-emerald-900/40 p-2 rounded-lg border border-emerald-600/30">
+                <span className="text-[10px] font-bold text-teal-300 block">2. Nada Datar (Sedang) ➡️</span>
+                <span className="text-[10px] text-slate-300">Dipakai pada potongan tengah ayat atau ayat kedua</span>
+              </div>
+              <div className="bg-emerald-900/40 p-2 rounded-lg border border-emerald-600/30">
+                <span className="text-[10px] font-bold text-sky-300 block">3. Nada Turun (Rendah) ↘️</span>
+                <span className="text-[10px] text-slate-300">Dipakai pada ujung akhir ayat atau waqaf penutup</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Audio Controls Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
