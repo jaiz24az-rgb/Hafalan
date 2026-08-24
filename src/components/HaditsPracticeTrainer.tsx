@@ -346,7 +346,7 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
               </div>
             </div>
 
-            <p className="font-serif text-2xl sm:text-3xl text-right leading-loose text-amber-200 font-bold tracking-wide">
+            <p className="font-mushaf arabic-mushaf-text text-2xl sm:text-3xl text-right text-amber-200 font-bold tracking-wide">
               {chunks[currentStep].arabic}
             </p>
 
@@ -425,7 +425,7 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
                     setCurrentStep(i);
                     handlePlayAudioChunk(c.arabic, i);
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-sm font-serif font-bold transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-lg text-sm font-mushaf font-bold transition-all cursor-pointer ${
                     currentStep === i
                       ? 'bg-emerald-600 text-white shadow-xs'
                       : 'bg-white text-emerald-950 border border-slate-200 hover:border-emerald-400'
@@ -464,7 +464,7 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
           </div>
 
           <div className="p-4 bg-white rounded-xl border border-amber-200 text-center shadow-xs">
-            <p className="font-serif text-2xl text-emerald-950 font-bold leading-loose">
+            <p className="font-mushaf arabic-mushaf-text text-2xl text-emerald-950 font-bold leading-loose">
               {detailed.quizFillBlank.sentenceWithBlank}
             </p>
             <p className="text-xs text-slate-600 italic mt-2">
@@ -495,7 +495,7 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
                   type="button"
                   disabled={selectedAnswer !== null}
                   onClick={() => handleSelectOption(idx)}
-                  className={`p-3 rounded-xl border text-sm font-serif font-bold text-center transition-all cursor-pointer ${btnStyle}`}
+                  className={`p-3 rounded-xl border text-sm font-mushaf font-bold text-center transition-all cursor-pointer ${btnStyle}`}
                 >
                   {opt}
                 </button>

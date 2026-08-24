@@ -284,7 +284,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                       onClick={() => onOpenDetailModal(item)}
                       className="mt-2.5 p-2 bg-emerald-900/5 hover:bg-emerald-900/10 rounded-lg text-right cursor-pointer border border-emerald-800/10 transition-colors"
                     >
-                      <p className="font-serif text-sm sm:text-base text-emerald-950 leading-relaxed font-semibold">
+                      <p className="font-mushaf text-sm sm:text-base text-emerald-950 leading-relaxed font-semibold">
                         {item.arabic.length > 70 ? item.arabic.slice(0, 70) + '...' : item.arabic}
                       </p>
                       {item.latin && (

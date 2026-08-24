@@ -1,6 +1,6 @@
 {
   "name": "Checklist Tugas & Hafalan Harian Realtime",
-  "description": "Aplikasi checklist tugas harian dan mutaba'ah siswa (audio contoh bacaan tartil Qari Al-Qur'an Juz 30 & Hadits, tempo belajar lambat 0.75x & metode tikrar ulang 3x, tes hafalan suara & tajwid AI, centang hafalan per ayat, modul latihan hadits bertahap & kuis, 36 Doa Harian, Sholat) dengan pemilih tanggal, pengingat push notification, dan sinkronisasi realtime.",
+  "description": "Aplikasi mutaba'ah hafalan siswa SD Muhammadiyah dengan tuntunan Tarjih Muhammadiyah lengkap dari awal sampai akhir sholat, font Mushaf Standar Indonesia, audio murattal juz 30 & hadits, tes akurasi hafalan & tajwid suara AI, dan checklist per ayat.",
   "requestFramePermissions": ["notifications", "microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

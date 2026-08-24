@@ -1,4 +1,6 @@
 import { QuranAyah } from '../types';
+import { QURAN_JUZ_30_PART_2 } from './quranJuz30Part2';
+import { QURAN_JUZ_30_PART_3 } from './quranJuz30Part3';
 
 export interface SurahDetailData {
   surahNumber: number;
@@ -11,7 +13,7 @@ export interface SurahDetailData {
   ayahs: QuranAyah[];
 }
 
-export const QURAN_JUZ_30_DATA: Record<string, SurahDetailData> = {
+const RAW_QURAN_JUZ_30_DATA: Record<string, SurahDetailData> = {
   surat_1: {
     surahNumber: 1,
     name: 'Al-Fatihah',
@@ -663,10 +665,28 @@ export const QURAN_JUZ_30_DATA: Record<string, SurahDetailData> = {
   }
 };
 
+export const QURAN_JUZ_30_DATA: Record<string, SurahDetailData> = {
+  ...RAW_QURAN_JUZ_30_DATA,
+  ...QURAN_JUZ_30_PART_2,
+  ...QURAN_JUZ_30_PART_3
+};
+
 // Helper to get or generate fallback full ayahs for any surah
 export function getSurahAyahs(itemId: string, surahNumber?: number, targetRange?: string): QuranAyah[] {
+  // Check by itemId e.g. "surat_91"
   if (QURAN_JUZ_30_DATA[itemId]) {
     return QURAN_JUZ_30_DATA[itemId].ayahs;
+  }
+
+  // Check by surahNumber e.g. 91 -> "surat_91"
+  if (surahNumber && QURAN_JUZ_30_DATA[`surat_${surahNumber}`]) {
+    return QURAN_JUZ_30_DATA[`surat_${surahNumber}`].ayahs;
+  }
+
+  // Parse surah number from itemId string e.g. "surat_91"
+  const parsedNum = parseInt(itemId.replace(/\D/g, ''), 10);
+  if (parsedNum && QURAN_JUZ_30_DATA[`surat_${parsedNum}`]) {
+    return QURAN_JUZ_30_DATA[`surat_${parsedNum}`].ayahs;
   }
 
   // Parse total ayat from target range like "40 Ayat" or "25 Ayat"

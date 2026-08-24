@@ -20,9 +20,10 @@ import {
   Gauge,
   Headphones
 } from 'lucide-react';
-import { ChecklistItem, CompletionStatus, DayRecord } from '../types';
+import { ChecklistItem, CompletionStatus, DayRecord, QuranAyah } from '../types';
 import { audioEngine } from '../utils/soundAndNotification';
 import { getSurahAyahs, QURAN_JUZ_30_DATA } from '../data/quranAyatData';
+import { fetchSurahAyahs } from '../utils/quranApi';
 import { SuratAyatTracker } from './SuratAyatTracker';
 import { HaditsPracticeTrainer } from './HaditsPracticeTrainer';
 import { audioLearningEngine, PlaybackSpeed, RepeatCount } from '../utils/audioLearningEngine';
@@ -79,12 +80,51 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
 
   // Quran Verses setup
   const isSurat = item.category === 'surat';
-  const surahAyahs = isSurat ? getSurahAyahs(item.id, item.number, item.targetRange) : [];
-  const hasAyahs = surahAyahs.length > 0;
   const surahNumber = item.number || QURAN_JUZ_30_DATA[item.id]?.surahNumber || (isSurat ? (parseInt(item.id.replace(/\D/g, ''), 10) || 1) : 1);
+  
+  // Initialize with fast static data
+  const [surahAyahs, setSurahAyahs] = useState<QuranAyah[]>(() => {
+    return isSurat ? getSurahAyahs(item.id, item.number, item.targetRange) : [];
+  });
+  const [isLoadingAyahs, setIsLoadingAyahs] = useState<boolean>(false);
+
+  // Fetch full live ayahs asynchronously if needed
+  useEffect(() => {
+    if (!isSurat) return;
+
+    let isMounted = true;
+    const loadAyahs = async () => {
+      // If current static ayahs have placeholders (e.g. arabic starts with "الآية "), fetch complete verses
+      const hasPlaceholder = surahAyahs.length === 0 || surahAyahs.some(a => a.arabic.startsWith('الآية') || a.latin.startsWith('Ayat '));
+      if (hasPlaceholder) {
+        setIsLoadingAyahs(true);
+      }
+
+      try {
+        const fetched = await fetchSurahAyahs(surahNumber, item.targetRange);
+        if (isMounted && fetched && fetched.length > 0) {
+          setSurahAyahs(fetched);
+        }
+      } catch (err) {
+        console.warn('Failed fetching Quran ayahs:', err);
+      } finally {
+        if (isMounted) {
+          setIsLoadingAyahs(false);
+        }
+      }
+    };
+
+    loadAyahs();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [item.id, surahNumber, isSurat, item.targetRange]);
+
+  const hasAyahs = isSurat || surahAyahs.length > 0;
 
   const [completedAyahs, setCompletedAyahs] = useState<number[]>(
-    currentProgress.completedAyahs || (currentProgress.completed && hasAyahs ? surahAyahs.map(a => a.number) : [])
+    currentProgress.completedAyahs || (currentProgress.completed && surahAyahs.length > 0 ? surahAyahs.map(a => a.number) : [])
   );
 
   // Tab mode
@@ -272,6 +312,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
               targetRange={item.targetRange}
               ayahs={surahAyahs}
               completedAyahs={completedAyahs}
+              isLoading={isLoadingAyahs}
               onToggleAyah={handleToggleAyah}
               onSetBatchAyahs={handleSetBatchAyahs}
               onSelectAllAyahs={handleSelectAllAyahs}
@@ -465,7 +506,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                       🔒 Teks Arab disembunyikan untuk melatih ingatan hafalan Anda.
                     </div>
                   ) : (
-                    <p className="font-serif text-xl sm:text-2xl text-right leading-loose text-emerald-950 font-bold tracking-wide">
+                    <p className="font-mushaf arabic-mushaf-text text-xl sm:text-2xl text-right text-emerald-950 font-bold tracking-wide">
                       {item.arabic}
                     </p>
                   )}

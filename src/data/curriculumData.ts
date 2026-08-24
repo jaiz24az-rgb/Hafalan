@@ -1212,62 +1212,152 @@ export const DOA_SEHARI_HARI: ChecklistItem[] = [
   }
 ];
 
-// 14 Doa Sholat & Ibadah Praktik Sesuai Himpunan Putusan Tarjih (HPT) Muhammadiyah
+// 26 Doa Sholat Lengkap dari Awal s/d Akhir Sesuai Himpunan Putusan Tarjih (HPT) Muhammadiyah
 export const DOA_SHOLAT_PRAKTIK: ChecklistItem[] = [
   {
     id: 'sholat_1',
     number: 1,
-    title: "1. Do'a Iftitah (Tuntunan Tarjih Muhammadiyah)",
+    title: '1. Niat Ikhlas & Takbiratul Ihram (Awal Sholat)',
     category: 'doa_sholat',
-    arabic: 'اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ، اللَّهُمَّ نَقِّنِي مِنَ الْخَطَايَا كَمَا يُنَقَّى الثَّوْبُ الْأَبْيَضُ مِنَ الدَّنَسِ، اللَّهُمَّ اغْسِلْ خَطَايَايَ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ',
-    latin: 'Allaahumma baa‘id bainii wa baina khathaayaaya kamaa baa‘adta bainal masyriqi wal maghrib. Allaahumma naqqinii minal khathaayaa kamaa yunaqqats-tsaubul abyadhu minad-danas. Allaahummagh-sil khathaayaaya bil maa-i wats-tsalji wal barad.',
-    translation: 'Ya Allah, jauhkanlah antara aku dan kesalahan-kesalahanku sebagaimana Engkau menjauhkan antara timur dan barat. Ya Allah, bersihkanlah aku dari kesalahan-kesalahan sebagaimana dibersihkannya pakaian putih dari kotoran. Ya Allah, cucilah kesalahan-kesalahanku dengan air, salju, dan embun.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Sholat) • HR. Bukhari no. 744 & Muslim no. 598'
+    arabic: 'اللَّهُ أَكْبَرُ',
+    latin: 'Allaahu Akbar.',
+    translation: 'Allah Maha Besar. (Memulai sholat dengan niat ikhlas lillahi ta‘ala di dalam hati tanpa dilafadzkan, seraya mengangkat kedua tangan sejajar bahu atau telinga dan bertakbir).',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Sholat) • HR. Bukhari no. 735 & Muslim no. 390'
   },
   {
     id: 'sholat_2',
     number: 2,
-    title: "2. Do'a Ruku' (Tuntunan Tarjih)",
+    title: "2. Do'a Iftitah (Pilihan Utama Tarjih - Allaahumma Baa‘id)",
     category: 'doa_sholat',
-    arabic: 'سُبْحَانَكَ اللَّهُمَّ رَبَّنَا وَبِحَمْدِكَ اللَّهُمَّ اغْفِرْ لِي',
-    latin: 'Subhaanakallaahumma Rabbanaa wa bihamdika Allaahummagh-fir lii.',
-    translation: 'Maha Suci Engkau ya Allah Tuhan kami, dan dengan memuji-Mu ya Allah ampunilah dosaku.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 817 & Muslim no. 484 dari Aisyah r.a.'
+    arabic: 'اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ، اللَّهُمَّ نَقِّنِي مِنَ الْخَطَايَا كَمَا يُنَقَّى الثَّوْبُ الْأَبْيَضُ مِنَ الدَّنَسِ، اللَّهُمَّ اغْسِلْ خَطَايَايَ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ',
+    latin: 'Allaahumma baa‘id bainii wa baina khathaayaaya kamaa baa‘adta bainal masyriqi wal maghrib. Allaahumma naqqinii minal khathaayaa kamaa yunaqqats-tsaubul abyadhu minad-danas. Allaahummagh-sil khathaayaaya bil maa-i wats-tsalji wal barad.',
+    translation: 'Ya Allah, jauhkanlah antara aku dan kesalahan-kesalahanku sebagaimana Engkau menjauhkan antara timur dan barat. Ya Allah, bersihkanlah aku dari kesalahan-kesalahan sebagaimana dibersihkannya pakaian putih dari kotoran. Ya Allah, cucilah kesalahan-kesalahanku dengan air, salju, dan embun.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Sholat Pokok) • HR. Bukhari no. 744 & Muslim no. 598'
   },
   {
     id: 'sholat_3',
     number: 3,
-    title: "3. Do'a I'tidal & Bangkit dari Ruku'",
+    title: "3. Do'a Iftitah Wajjahtu (Alternatif Tarjih)",
     category: 'doa_sholat',
-    arabic: 'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ . رَبَّنَا وَلَكَ الْحَمْدُ، حَمْدًا كَثِيرًا طَيِّبًا مُبَارَكًا فِيهِ',
-    latin: 'Sami‘allaahu liman hamidah. Rabbanaa wa lakal hamdu, hamdan katsiiran thayyiban mubaarakan fiih.',
-    translation: 'Allah Maha Mendengar siapa saja yang memuji-Nya. Wahai Tuhan kami, hanya bagi-Mu segala puji, pujian yang banyak, baik, dan penuh dengan keberkahan.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 799 & Muslim no. 476'
+    arabic: 'وَجَّهْتُ وَجْهِيَ لِلَّذِي فَطَرَ السَّمَاوَاتِ وَالْأَرْضَ حَنِيفًا مُسْلِمًا وَمَا أَنَا مِنَ الْمُشْرِكِينَ، إِنَّ صَلَاتِي وَنُسُكِي وَمَحْيَايَ وَمَمَاتِي لِلَّهِ رَبِّ الْعَالَمِينَ، لَا شَرِيكَ لَهُ وَبِذَٰلِكَ أُمِرْتُ وَأَنَا مِنَ الْمُسْلِمِينَ',
+    latin: 'Wajjahtu wajhiya lilladzii fatharas-samaawaati wal ardha haniifam muslimaw-wa maa ana minal musyrikiin. Inna shalaatii wa nusukii wa mahyaaya wa mamaatii lillaahi Rabbil ‘aalamiin. Laa syariika lahu wa bidzaalika umirtu wa ana minal muslimiin.',
+    translation: 'Aku hadapkan wajahku kepada Dzat yang menciptakan langit dan bumi dengan lurus lagi berserah diri, dan aku bukanlah dari golongan orang-orang musyrik. Sesungguhnya shalatku, ibadahku, hidupku dan matiku hanyalah untuk Allah Tuhan seluruh alam, tiada sekutu bagi-Nya...',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Muslim no. 771 dari Ali bin Abi Thalib'
   },
   {
     id: 'sholat_4',
     number: 4,
-    title: "4. Do'a Sujud (Tuntunan Tarjih)",
+    title: "4. Bacaan Ta‘awwudz & Basmalah Sirr (Sebelum Al-Fatihah)",
     category: 'doa_sholat',
-    arabic: 'سُبْحَانَكَ اللَّهُمَّ رَبَّنَا وَبِحَمْدِكَ اللَّهُمَّ اغْفِرْ لِي',
-    latin: 'Subhaanakallaahumma Rabbanaa wa bihamdika Allaahummagh-fir lii.',
-    translation: 'Maha Suci Engkau ya Allah Tuhan kami, dan dengan memuji-Mu ya Allah ampunilah dosaku.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 817 & Muslim no. 484'
+    arabic: 'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ . بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+    latin: 'A‘uudzu billaahi minasy-syaithaanir-rajiim. Bismillaahir-rahmaanir-rahiim.',
+    translation: 'Aku berlindung kepada Allah dari godaan setan yang terkutuk. Dengan menyebut nama Allah Yang Maha Pengasih lagi Maha Penyayang. (Dibaca dengan suara pelan/sirr sebelum membaca Al-Fatihah).',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • QS. An-Nahl: 98 & HR. Muslim no. 399'
   },
   {
     id: 'sholat_5',
     number: 5,
-    title: "5. Do'a Duduk Antara Dua Sujud (Iftirasy)",
+    title: '5. Surat Al-Fatihah (Rukun Sholat) & Ucapan Aamiin',
     category: 'doa_sholat',
-    arabic: 'اللَّهُمَّ اغْفِرْ لِي وَارْحَمْنِي وَاجْبُرْنِي وَاهْدِنِي وَارْزُقْنِي',
-    latin: 'Allaahummagh-fir lii warhamnii wajburnii wahdinii warzuqnii.',
-    translation: 'Ya Allah ampunilah aku, sayangilah aku, cukupkanlah kekuranganku, berilah petunjuk kepadaku, dan limpahkanlah rezeki kepadaku.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Abu Dawud no. 850 & Tirmidzi no. 284'
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾ آمِينَ',
+    latin: 'Bismillaahir-rahmaanir-rahiim. Alhamdu lillaahi Rabbil ‘aalamiin. Ar-Rahmaanir-Rahiim. Maaliki yaumid-diin. Iyyaaka na’budu wa iyyaaka nasta’iin. Ihdinash-shiraathal mustaqiim. Shiraathal-ladziina an’amta ‘alaihim ghairil maghdhuubi ‘alaihim waladh-dhaalliin. Aamiin.',
+    translation: 'Membaca surat Al-Fatihah secara tartil pada setiap rakaat sholat, dan disunnahkan mengucapkan "Aamiin" (Ya Allah kabulkanlah) setelah ayat terakhir.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Pokok) • HR. Bukhari no. 756 & Muslim no. 394'
   },
   {
     id: 'sholat_6',
     number: 6,
-    title: "6. Do'a Tasyahud (Tahiyyat Awal & Akhir - Lafadz Ibnu Mas'ud)",
+    title: "6. Do'a Ruku‘ (Pilihan Utama Tarjih Muhammadiyah)",
+    category: 'doa_sholat',
+    arabic: 'سُبْحَانَكَ اللَّهُمَّ رَبَّنَا وَبِحَمْدِكَ اللَّهُمَّ اغْفِرْ لِي',
+    latin: 'Subhaanakallaahumma Rabbanaa wa bihamdika Allaahummagh-fir lii.',
+    translation: 'Maha Suci Engkau ya Allah Tuhan kami, dan dengan memuji-Mu ya Allah ampunilah dosaku.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Sholat) • HR. Bukhari no. 817 & Muslim no. 484 dari Aisyah r.a.'
+  },
+  {
+    id: 'sholat_7',
+    number: 7,
+    title: "7. Do'a Ruku‘ Alternatif (Subbuuhun Qudduus / Subhaana Rabbiyal ‘Azhiim)",
+    category: 'doa_sholat',
+    arabic: 'سُبُّوحٌ قُدُّوسٌ رَبُّ الْمَلَائِكَةِ وَالرُّوحِ',
+    latin: 'Subbuuhun Qudduusun Rabbul malaa-ikati war-ruuh.',
+    translation: 'Maha Suci lagi Maha Kudus, Tuhan para malaikat dan Malaikat Jibril (atau membaca: Subhaana Rabbiyal ‘Azhiimi wa bihamdih 3x).',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Muslim no. 487 & Abu Dawud'
+  },
+  {
+    id: 'sholat_8',
+    number: 8,
+    title: "8. Tasmi‘ & Do'a I‘tidal (Pilihan Utama Tarjih)",
+    category: 'doa_sholat',
+    arabic: 'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ . رَبَّنَا وَلَكَ الْحَمْدُ، حَمْدًا كَثِيرًا طَيِّبًا مُبَارَكًا فِيهِ',
+    latin: 'Sami‘allaahu liman hamidah. Rabbanaa wa lakal hamdu, hamdan katsiiran thayyiban mubaarakan fiih.',
+    translation: 'Allah Maha Mendengar orang yang memuji-Nya. Wahai Tuhan kami, hanya bagi-Mu segala puji, pujian yang banyak, baik, dan penuh dengan keberkahan.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 799 & Muslim no. 476'
+  },
+  {
+    id: 'sholat_9',
+    number: 9,
+    title: "9. Do'a I‘tidal Lanjutan (Mil-as-Samaawaati)",
+    category: 'doa_sholat',
+    arabic: 'رَبَّنَا لَكَ الْحَمْدُ مِلْءَ السَّمَاوَاتِ وَمِلْءَ الْأَرْضِ وَمِلْءَ مَا شِئْتَ مِنْ شَيْءٍ بَعْدُ',
+    latin: 'Rabbanaa lakal hamdu mil-as-samaawaati wa mil-al ardhi wa mil-a maa syi’ta min syai-in ba‘du.',
+    translation: 'Wahai Tuhan kami, bagi-Mulah segala puji sepenuh langit dan sepenuh bumi dan sepenuh apa saja yang Engkau kehendaki sesudah itu.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Muslim no. 477'
+  },
+  {
+    id: 'sholat_10',
+    number: 10,
+    title: "10. Do'a Sujud (Pilihan Utama Tarjih Muhammadiyah)",
+    category: 'doa_sholat',
+    arabic: 'سُبْحَانَكَ اللَّهُمَّ رَبَّنَا وَبِحَمْدِكَ اللَّهُمَّ اغْفِرْ لِي',
+    latin: 'Subhaanakallaahumma Rabbanaa wa bihamdika Allaahummagh-fir lii.',
+    translation: 'Maha Suci Engkau ya Allah Tuhan kami, dan dengan memuji-Mu ya Allah ampunilah dosaku.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Sholat) • HR. Bukhari no. 817 & Muslim no. 484'
+  },
+  {
+    id: 'sholat_11',
+    number: 11,
+    title: "11. Do'a Sujud Alternatif (Subbuuhun Qudduus / Subhaana Rabbiyal A‘laa)",
+    category: 'doa_sholat',
+    arabic: 'سُبُّوحٌ قُدُّوسٌ رَبُّ الْمَلَائِكَةِ وَالرُّوحِ',
+    latin: 'Subbuuhun Qudduusun Rabbul malaa-ikati war-ruuh.',
+    translation: 'Maha Suci lagi Maha Kudus, Tuhan sekalian malaikat dan Malaikat Jibril (atau membaca: Subhaana Rabbiyal A‘laa wa bihamdih 3x).',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Muslim no. 487'
+  },
+  {
+    id: 'sholat_12',
+    number: 12,
+    title: "12. Do'a Duduk Antara Dua Sujud (HPT Pokok - Allaahummaghfirlii)",
+    category: 'doa_sholat',
+    arabic: 'اللَّهُمَّ اغْفِرْ لِي وَارْحَمْنِي وَاجْبُرْنِي وَاهْدِنِي وَارْزُقْنِي',
+    latin: 'Allaahummagh-fir lii warhamnii wajburnii wahdinii warzuqnii.',
+    translation: 'Ya Allah ampunilah aku, sayangilah aku, cukupkanlah kekuranganku, berilah petunjuk kepadaku, dan limpahkanlah rezeki kepadaku.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Sholat Pokok) • HR. Abu Dawud no. 850 & Tirmidzi no. 284'
+  },
+  {
+    id: 'sholat_13',
+    number: 13,
+    title: "13. Do'a Duduk Antara Dua Sujud Alternatif (Rabbighfirlii)",
+    category: 'doa_sholat',
+    arabic: 'رَبِّ اغْفِرْ لِي، رَبِّ اغْفِرْ لِي',
+    latin: 'Rabbigh-fir lii, Rabbigh-fir lii.',
+    translation: 'Wahai Tuhanku ampunilah aku, wahai Tuhanku ampunilah aku.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Abu Dawud no. 874 & Ibnu Majah'
+  },
+  {
+    id: 'sholat_14',
+    number: 14,
+    title: "14. Do'a Sujud Tilawah & Sujud Sahwi",
+    category: 'doa_sholat',
+    arabic: 'سَجَدَ وَجْهِي لِلَّذِي خَلَقَهُ وَصَوَّرَهُ وَشَقَّ سَمْعَهُ وَبَصَرَهُ بِحَوْلِهِ وَقُوَّتِهِ فَتَبَارَكَ اللَّهُ أَحْسَنُ الْخَالِقِينَ',
+    latin: 'Sajada wajhiya lilladzii khalaqahuu wa shawwarahuu wa syaqqa sam’ahuu wa basharahuu bihaulihii wa quwwatih, fatabaarakallaahu ahsanul khaaliqiin.',
+    translation: 'Bersujud wajahku kepada Dzat yang menciptakannya, membentuk rupanya, dan membuka pendengaran serta penglihatannya dengan daya dan kekuatan-Nya. Maha Suci Allah sebaik-baik Pencipta.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Abu Dawud no. 1414 & Tirmidzi no. 580'
+  },
+  {
+    id: 'sholat_15',
+    number: 15,
+    title: "15. Do'a Tasyahud (Tahiyyat Awal & Akhir - Riwayat Ibnu Mas‘ud)",
     category: 'doa_sholat',
     arabic: 'التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَىٰ عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
     latin: 'Attahiyyaatu lillaahi wash-shalawaatu wath-thayyibaat. Assalaamu ‘alaika ayyuhan-nabiyyu wa rahmatullaahi wa barakaatuh. Assalaamu ‘alainaa wa ‘alaa ‘ibaadillaahish-shaalihiin. Asyhadu allaa ilaaha illallaah wa asyhadu anna Muhammadan ‘abduhu wa rasuuluh.',
@@ -1275,49 +1365,59 @@ export const DOA_SHOLAT_PRAKTIK: ChecklistItem[] = [
     sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Pokok) • HR. Bukhari no. 831 & Muslim no. 402'
   },
   {
-    id: 'sholat_7',
-    number: 7,
-    title: "7. Sholawat Ibrahimiyyah dalam Tasyahud",
+    id: 'sholat_16',
+    number: 16,
+    title: '16. Sholawat Ibrahimiyyah dalam Tasyahud (Tuntunan Tarjih - Tanpa Sayyidina)',
     category: 'doa_sholat',
     arabic: 'اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، وَبَارِكْ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا بَارَكْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ',
     latin: 'Allaahumma shalli ‘alaa Muhammad wa ‘alaa aali Muhammad, kamaa shallaita ‘alaa Ibraahiim wa ‘alaa aali Ibraahiim, wa baarik ‘alaa Muhammad wa ‘alaa aali Muhammad, kamaa baarakta ‘alaa Ibraahiim wa ‘alaa aali Ibraahiim, innaka Hamiidum Majiid.',
     translation: 'Ya Allah, limpahkanlah rahmat kepada Nabi Muhammad dan keluarga Muhammad sebagaimana Engkau limpahkan rahmat kepada Nabi Ibrahim dan keluarga Ibrahim, dan berkahilah Nabi Muhammad dan keluarga Muhammad sebagaimana Engkau berkahi Nabi Ibrahim dan keluarga Ibrahim. Sesungguhnya Engkau Maha Terpuji lagi Maha Mulia.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 3370 & Muslim no. 406'
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Pokok) • HR. Bukhari no. 3370 & Muslim no. 406'
   },
   {
-    id: 'sholat_8',
-    number: 8,
-    title: "8. Do'a Isti'adzah 4 Perkara Sebelum Salam",
+    id: 'sholat_17',
+    number: 17,
+    title: "17. Do'a Isti‘adzah 4 Perkara Sebelum Salam (HPT Pokok)",
     category: 'doa_sholat',
     arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ، وَمِنْ عَذَابِ الْقَبْرِ، وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ، وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ',
     latin: 'Allaahumma innii a’uudzu bika min ‘adzaabi jahannam, wa min ‘adzaabil qabri, wa min fitnatil mahyaa wal mamaat, wa min syarri fitnatil masiihid-dajjaal.',
     translation: 'Ya Allah, sesungguhnya aku berlindung kepada-Mu dari azab neraka Jahannam, dari azab kubur, dari fitnah kehidupan dan kematian, serta dari keburukan fitnah Al-Masih Ad-Dajjal.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 1377 & Muslim no. 588'
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Pokok) • HR. Bukhari no. 1377 & Muslim no. 588'
   },
   {
-    id: 'sholat_9',
-    number: 9,
-    title: '9. Salam Penutup Sholat (Kanan & Kiri)',
+    id: 'sholat_18',
+    number: 18,
+    title: "18. Do'a Permohonan Ampunan Sebelum Salam (Do'a Abu Bakar)",
+    category: 'doa_sholat',
+    arabic: 'اللَّهُمَّ إِنِّي ظَلَمْتُ نَفْسِي ظُلْمًا كَثِيرًا وَلَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ، فَاغْفِرْ لِي مَغْفِرَةً مِنْ عِنْدِكَ وَارْحَمْنِي إِنَّكَ أَنْتَ الْغَفُورُ الرَّحِيمُ',
+    latin: 'Allaahumma innii zhalamtu nafsii zhulman katsiiran wa laa yaghfirudz-dzunuuba illaa Anta, fagh-fir lii maghfiratam-min ‘indika warhamnii innaka Antal Ghafuurur Rahiim.',
+    translation: 'Ya Allah, sesungguhnya aku telah banyak menzalimi diriku sendiri, dan tidak ada yang mengampuni dosa selain Engkau. Maka ampunilah aku dengan ampunan dari sisi-Mu dan sayangilah aku. Sesungguhnya Engkau Maha Pengampun lagi Maha Penyayang.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 834 & Muslim no. 2705'
+  },
+  {
+    id: 'sholat_19',
+    number: 19,
+    title: '19. Salam Penutup Sholat (Menoleh Kanan & Kiri)',
     category: 'doa_sholat',
     arabic: 'السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ (إِلَى الْيَمِينِ) - السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ (إِلَى الْيَسَارِ)',
-    latin: 'Assalaamu ‘alaikum wa rahmatullaahi wa barakaatuh (menoleh ke kanan) - Assalaamu ‘alaikum wa rahmatullaah (menoleh ke kiri).',
+    latin: 'Assalaamu ‘alaikum wa rahmatullaahi wa barakaatuh (ke kanan) - Assalaamu ‘alaikum wa rahmatullaah (ke kiri).',
     translation: 'Semoga keselamatan, rahmat Allah dan keberkahan-Nya tercurah kepada kalian (menoleh ke kanan hingga tampak pipi putih, kemudian menoleh ke kiri).',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Abu Dawud no. 996 & Tirmidzi'
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Abu Dawud no. 996 & Tirmidzi no. 295'
   },
   {
-    id: 'sholat_10',
-    number: 10,
-    title: "10. Dzikir Istighfar & Do'a Keselamatan Ba'da Sholat",
+    id: 'sholat_20',
+    number: 20,
+    title: "20. Dzikir Ba‘da Sholat 1: Istighfar (3x) & Do'a Keselamatan",
     category: 'doa_sholat',
     arabic: 'أَسْتَغْفِرُ اللَّهَ (٣×)، اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالإِكْرَامِ',
     latin: 'Astaghfirullaah (3x). Allaahumma Antas-salaamu wa minkas-salaamu tabaarakta yaa Dzal-jalaali wal ikraam.',
     translation: 'Aku memohon ampunan kepada Allah (3x). Ya Allah, Engkaulah Dzat Maha Pemberi Keselamatan, dan dari-Mulah keselamatan, Maha Berkah Engkau wahai Tuhan Pemilik Keagungan dan Kemuliaan.',
-    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Muslim no. 591'
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Muslim no. 591 dari Tsauban r.a.'
   },
   {
-    id: 'sholat_11',
-    number: 11,
-    title: "11. Dzikir Tahlil & Penyerahan Diri Ba'da Sholat",
+    id: 'sholat_21',
+    number: 21,
+    title: '21. Dzikir Ba‘da Sholat 2: Tahlil & Ketundukan Mutlak',
     category: 'doa_sholat',
     arabic: 'لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ وَلَا مُعْطِيَ لِمَا مَنَعْتَ وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ',
     latin: 'Laa ilaaha illallaah wahdahu laa syariikalah, lahul mulku wa lahul hamdu wa Huwa ‘alaa kulli syai-in qadiir. Allaahumma laa maani‘a limaa a‘thaita wa laa mu‘thiya limaa mana‘ta wa laa yanfa‘u dzal jaddi minkal jaddu.',
@@ -1325,34 +1425,54 @@ export const DOA_SHOLAT_PRAKTIK: ChecklistItem[] = [
     sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Bukhari no. 844 & Muslim no. 593'
   },
   {
-    id: 'sholat_12',
-    number: 12,
-    title: '12. Dzikir Tasbih, Tahmid, Takbir (33x) & Tahlil Penutup',
+    id: 'sholat_22',
+    number: 22,
+    title: '22. Dzikir Ba‘da Sholat 3: Tasbih, Tahmid, Takbir (33x) & Tahlil ke-100',
     category: 'doa_sholat',
     arabic: 'سُبْحَانَ اللَّهِ (٣٣×)، الْحَمْدُ لِلَّهِ (٣٣×)، اللَّهُ أَكْبَرُ (٣٣×) - لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',
-    latin: 'Subhaanallaah (33x), Alhamdulillaah (33x), Allaahu Akbar (33x) - disempurnakan Tahlil ke-100: Laa ilaaha illallaahu wahdahu laa syariikalah, lahul mulku wa lahul hamdu wa Huwa ‘alaa kulli syai-in qadiir.',
-    translation: 'Maha Suci Allah (33x), Segala puji bagi Allah (33x), Allah Maha Besar (33x), dan ditutup dengan kalimat tahlil penggenap 100 agar diampuni dosa-dosanya.',
+    latin: 'Subhaanallaah (33x), Alhamdulillaah (33x), Allaahu Akbar (33x) - disempurnakan tahlil ke-100: Laa ilaaha illallaahu wahdahu laa syariikalah, lahul mulku wa lahul hamdu wa Huwa ‘alaa kulli syai-in qadiir.',
+    translation: 'Maha Suci Allah (33x), Segala puji bagi Allah (33x), Allah Maha Besar (33x), dan ditutup dengan kalimat tahlil penggenap 100 agar diampuni seluruh dosa-dosanya.',
     sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT) • HR. Muslim no. 597'
   },
   {
-    id: 'sholat_13',
-    number: 13,
-    title: "13. Membaca Ayat Kursi & Al-Mu'awwidzatain Ba'da Sholat",
+    id: 'sholat_23',
+    number: 23,
+    title: '23. Dzikir Ba‘da Sholat 4: Membaca Ayat Kursi & 3 Qul (Al-Ikhlas, Al-Falaq, An-Naas)',
     category: 'doa_sholat',
-    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ... (آيَةُ الْكُرْسِيِّ) + قُلْ هُوَ اللَّهُ أَحَدٌ + قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ + قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
-    latin: 'Membaca Ayat Kursi (QS. Al-Baqarah: 255), Surat Al-Ikhlas, Surat Al-Falaq, dan Surat An-Naas.',
-    translation: 'Melantunkan Ayat Kursi dan tiga surat perlindungan (Al-Ikhlas, Al-Falaq, An-Naas) sesudah sholat fardhu sebagai benteng perlindungan diri.',
+    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ... (آيَةُ الْكُرْسِيِّ) + قُلْ هُوَ اللَّهُ أَحَدٌ + قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ + قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
+    latin: 'Membaca Ayat Kursi (QS. Al-Baqarah: 255), Surat Al-Ikhlas, Surat Al-Falaq, dan Surat An-Naas sesudah sholat fardhu.',
+    translation: 'Melantunkan Ayat Kursi dan tiga surat perlindungan (Al-Ikhlas, Al-Falaq, An-Naas) sesudah sholat fardhu sebagai benteng perlindungan diri dan jaminan surga.',
     sourceOrNotes: 'Putusan Tarjih Muhammadiyah • HR. An-Nasa-i & Ath-Thabrani'
   },
   {
-    id: 'sholat_14',
-    number: 14,
-    title: '14. Praktik Ibadah Tarjih: Wudhu Tartil, Sholat Lail & Witir, Dhuha & Jenazah',
+    id: 'sholat_24',
+    number: 24,
+    title: "24. Do'a Bimbingan Dzikir & Syukur Ba‘da Sholat (Do'a Mu‘adz bin Jabal)",
     category: 'doa_sholat',
-    arabic: 'صَلُّوا كَمَا رَأَيْتُمُونِي أُصَلِّي',
-    latin: 'Shalluu kamaa ra-aitumuunii ushallii (Shalatlah kalian sebagaimana kalian melihat aku shalat - HR. Bukhari no. 631).',
-    translation: 'Pelaksanaan tata cara Wudhu tartil tanpa berlebih-lebihan, Sholat Lail & Witir 11 Rakaat (formasi 4-4-3 atau 2-2-2-2-2-1), Sholat Sunnah Dhuha, Sholat Jenazah (4 Takbir tanpa ruku dan sujud), dan Sujud Sahwi sesuai Himpunan Putusan Tarjih (HPT) Muhammadiyah.',
-    sourceOrNotes: 'Himpunan Putusan Tarjih (HPT) Muhammadiyah'
+    arabic: 'اللَّهُمَّ أَعِنِّي عَلَىٰ ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ',
+    latin: 'Allaahumma a‘innii ‘alaa dzikrika wa syukrika wa husni ‘ibaadatik.',
+    translation: 'Ya Allah, tolonglah dan bimbinglah aku untuk senantiasa mengingat-Mu, bersyukur kepada-Mu, dan beribadah dengan sebaik-baiknya kepada-Mu.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah • HR. Abu Dawud no. 1522 & An-Nasa-i'
+  },
+  {
+    id: 'sholat_25',
+    number: 25,
+    title: "25. Do'a Qunut Witir (Tuntunan Tarjih Muhammadiyah)",
+    category: 'doa_sholat',
+    arabic: 'اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَىٰ عَلَيْكَ، وَإِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ، وَلَا يَعِزُّ مَنْ عَادَيْتَ، تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ',
+    latin: 'Allaahummah-dinii fiiman hadait, wa ‘aafinii fiiman ‘aafait, wa tawallanii fiiman tawallait, wa baarik lii fiimaa a‘thait, wa qinii syarra maa qadhait, fa innaka taqdhii wa laa yuqdhaa ‘alaik, wa innahuu laa yadzillu maw-waalait, wa laa ya‘izzu man ‘aadait, tabaarakta Rabbanaa wa ta‘aalait.',
+    translation: 'Ya Allah, berilah aku petunjuk sebagaimana orang yang telah Engkau beri petunjuk, berilah aku kesehatan sebagaimana orang yang telah Engkau beri kesehatan, lindungilah aku sebagaimana orang yang telah Engkau lindungi, berkahilah bagiku apa yang Engkau berikan, dan lindungilah aku dari keburukan yang telah Engkau takdirkan...',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Sholat Lail & Witir) • HR. Abu Dawud no. 1425, Tirmidzi no. 464 & An-Nasa-i'
+  },
+  {
+    id: 'sholat_26',
+    number: 26,
+    title: '26. Praktik & Do‘a Sholat Jenazah Lengkap (4 Takbir Tarjih Muhammadiyah)',
+    category: 'doa_sholat',
+    arabic: 'اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مَدْخَلَهُ وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ . اللَّهُمَّ لَا تَحْرِمْنَا أَجْرَهُ وَلَا تَفْتِنَّا بَعْدَهُ وَاغْفِرْ لَنَا وَلَهُ',
+    latin: 'Takbir 1 membaca Al-Fatihah, Takbir 2 membaca Sholawat Ibrahimiyyah, Takbir 3 membaca: Allaahummagh-fir lahu warhamhu wa ‘aafihi wa’fu ‘anhu..., Takbir 4 membaca: Allaahumma laa tahrimnaa ajrahu wa laa taftinnaa ba’dahu wagh-fir lanaa wa lahu, lalu diakhiri salam ke kanan dan ke kiri.',
+    translation: 'Pelaksanaan Sholat Jenazah tanpa ruku dan sujud sesuai Putusan Tarjih Muhammadiyah dengan 4 takbir dan doa pengampunan bagi jenazah.',
+    sourceOrNotes: 'Putusan Tarjih Muhammadiyah (HPT Bab Jenazah) • HR. Muslim no. 963 & Abu Dawud'
   }
 ];
 
@@ -1541,36 +1661,36 @@ export const GRADE_TARGET_DESCRIPTIONS: Record<string, { surat: string; hadits: 
     surat: "An Naba' s/d An Nazi'at",
     hadits: 'No 1 - 6 (Perkataan baik s/d Makan tangan kanan)',
     doa: 'No 1 - 36 (Doa Sehari-hari)',
-    sholat: 'No 1 - 14 (Doa Sholat & Praktik)'
+    sholat: 'No 1 - 10 (Takbiratul Ihram s/d Sujud)'
   },
   kelas_2: {
     surat: "An Naba' s/d At Takwir",
     hadits: 'No 7 - 12 (Ridha Allah s/d Berkata baik/diam)',
     doa: 'No 1 - 36 (Doa Sehari-hari)',
-    sholat: 'No 1 - 14 (Doa Sholat & Praktik)'
+    sholat: 'No 1 - 14 (Takbiratul Ihram s/d Duduk Dua Sujud & Sujud Tilawah)'
   },
   kelas_3: {
     surat: "An Naba' s/d Al Insyiqoq",
     hadits: 'No 13 - 18 (Larangan siksa binatang s/d Memuliakan tamu)',
     doa: 'No 1 - 36 (Doa Sehari-hari)',
-    sholat: 'No 1 - 14 (Doa Sholat & Praktik)'
+    sholat: 'No 1 - 17 (Takbiratul Ihram s/d Tasyahud & Sholawat & Istiadzah)'
   },
   kelas_4: {
     surat: "An Naba' s/d Al Ghoosyiyah",
     hadits: 'No 19 - 24 (Singkirkan duri s/d Tolong menolong)',
     doa: 'No 1 - 36 (Doa Sehari-hari)',
-    sholat: 'No 1 - 14 (Doa Sholat & Praktik)'
+    sholat: 'No 1 - 20 (Takbiratul Ihram s/d Salam & Dzikir Istighfar)'
   },
   kelas_5: {
     surat: "An Naba' s/d Ad Dhuha",
     hadits: 'No 25 - 30 (Larangan berbisik s/d Sikap pada yang tua)',
     doa: 'No 1 - 36 (Doa Sehari-hari)',
-    sholat: 'No 1 - 14 (Doa Sholat & Praktik)'
+    sholat: 'No 1 - 24 (Lengkap Dzikir Ba’da Sholat Fardhu)'
   },
   kelas_6: {
     surat: "An Naba' s/d An Naas (Lengkap Juz 30)",
     hadits: 'No 31 - 36 (Orang dibenci s/d Persaudaraan muslim)',
     doa: 'No 1 - 36 (Doa Sehari-hari)',
-    sholat: 'No 1 - 14 (Doa Sholat & Praktik)'
+    sholat: 'No 1 - 26 (Lengkap Awal s/d Akhir Sholat, Qunut Witir & Jenazah Tarjih)'
   }
 };

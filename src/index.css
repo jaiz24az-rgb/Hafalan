@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-mushaf: 'LPMQ IsepMisbah', 'LPMQ Misbah', 'Mushaf Standar Indonesia', 'Kemenag', 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+  }
+}
+
+/* Mushaf Standar Indonesia (MSI) & Rasm Usmani Indonesia Font Class */
+.font-mushaf,
+.font-arabic-mushaf,
+.arabic-mushaf-text {
+  font-family: 'LPMQ IsepMisbah', 'LPMQ Misbah', 'Mushaf Standar Indonesia', 'Kemenag', 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+  font-feature-settings: "cv01" on, "ss01" on, "liga" on, "calt" on, "kern" on;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 2.3;
+  direction: rtl;
+  text-align: right;
+  word-spacing: 0.12em;
+}
+
+.arabic-inline {
+  font-family: 'LPMQ IsepMisbah', 'LPMQ Misbah', 'Mushaf Standar Indonesia', 'Kemenag', 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+  direction: rtl;
+  line-height: 1.8;
+  font-feature-settings: "liga" on, "calt" on;
+}
+

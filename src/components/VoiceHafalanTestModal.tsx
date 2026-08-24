@@ -599,7 +599,7 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
                   <span>Teks Asli Rujukan:</span>
                   {selectedItem.targetRange && <span>{selectedItem.targetRange}</span>}
                 </div>
-                <p className="font-serif text-lg sm:text-xl text-right text-emerald-950 leading-relaxed font-bold">
+                <p className="font-mushaf arabic-mushaf-text text-lg sm:text-xl text-right text-emerald-950 font-bold">
                   {selectedItem.arabic}
                 </p>
                 {selectedItem.latin && (
@@ -1039,7 +1039,7 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
                     <Volume2 className="w-3.5 h-3.5 text-emerald-600" />
                     Transkripsi Suara Siswa yang Terdeteksi:
                   </h4>
-                  <p className="font-serif text-base sm:text-lg text-right text-emerald-950 font-semibold leading-relaxed">
+                  <p className="font-mushaf arabic-mushaf-text text-base sm:text-lg text-right text-emerald-950 font-semibold">
                     {result.transcription}
                   </p>
                 </div>

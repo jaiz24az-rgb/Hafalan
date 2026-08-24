@@ -40,6 +40,7 @@ interface SuratAyatTrackerProps {
   targetRange?: string;
   ayahs: QuranAyah[];
   completedAyahs: number[];
+  isLoading?: boolean;
   onToggleAyah: (ayahNumber: number) => void;
   onSetBatchAyahs: (uptoAyah: number) => void;
   onSelectAllAyahs: () => void;
@@ -53,6 +54,7 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
   targetRange,
   ayahs,
   completedAyahs,
+  isLoading = false,
   onToggleAyah,
   onSetBatchAyahs,
   onSelectAllAyahs,
@@ -576,7 +578,18 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
 
       {/* 4. Verses List */}
       <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
-        {filteredAyahs.map((ayah) => {
+        {isLoading && filteredAyahs.length === 0 ? (
+          <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200/80 space-y-2">
+            <div className="inline-block w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs font-semibold text-slate-700">Memuat teks ayat Al-Qur'an & terjemahan...</p>
+            <p className="text-[11px] text-slate-500">Mengambil data resmi Kemenag RI</p>
+          </div>
+        ) : filteredAyahs.length === 0 ? (
+          <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-500">
+            Tidak ada ayat yang sesuai dengan filter.
+          </div>
+        ) : (
+          filteredAyahs.map((ayah) => {
           const isDone = completedAyahs.includes(ayah.number);
           const isPlaying = currentPlayingAyah === ayah.number;
 
@@ -665,7 +678,7 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
                 </div>
               ) : (
                 <p
-                  className={`font-serif text-xl sm:text-2xl text-right leading-loose font-bold my-1 tracking-wide transition-colors ${
+                  className={`font-mushaf arabic-mushaf-text text-xl sm:text-2xl text-right font-bold my-1 tracking-wide transition-colors ${
                     isPlaying ? 'text-amber-950' : 'text-emerald-950'
                   }`}
                 >
@@ -698,7 +711,7 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
               )}
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   );
