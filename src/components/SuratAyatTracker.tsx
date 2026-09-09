@@ -155,7 +155,7 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
         },
         onError: (err) => {
           console.warn('Audio playback error:', err);
-          setAudioError('Menggunakan pelafalan alternatif (Web Speech)');
+          setAudioError('Menggunakan pelafalan audio alternatif...');
         }
       }
     );

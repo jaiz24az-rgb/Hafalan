@@ -13,6 +13,43 @@ const __dirname = path.dirname(__filename);
 // In-memory sync packet storage by room code
 const syncStore = new Map<string, { updatedAt: string; data: unknown }>();
 
+// In-memory cache for Arabic audio WAV buffers: textKey -> Buffer
+const arabicAudioCache = new Map<string, Buffer>();
+
+// Helper to convert raw PCM 16-bit linear audio to standard WAV container
+function pcmToWav(pcmBuffer: Buffer, sampleRate = 24000, numChannels = 1, bitsPerSample = 16): Buffer {
+  const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+  const blockAlign = (numChannels * bitsPerSample) / 8;
+  const dataSize = pcmBuffer.length;
+  const headerSize = 44;
+  const totalSize = headerSize + dataSize;
+  const buffer = Buffer.alloc(totalSize);
+
+  // RIFF chunk descriptor
+  buffer.write('RIFF', 0);
+  buffer.writeUInt32LE(totalSize - 8, 4);
+  buffer.write('WAVE', 8);
+
+  // fmt sub-chunk
+  buffer.write('fmt ', 12);
+  buffer.writeUInt32LE(16, 16); // Subchunk1Size
+  buffer.writeUInt16LE(1, 20); // AudioFormat (1 for PCM)
+  buffer.writeUInt16LE(numChannels, 22);
+  buffer.writeUInt32LE(sampleRate, 24);
+  buffer.writeUInt32LE(byteRate, 28);
+  buffer.writeUInt16LE(blockAlign, 32);
+  buffer.writeUInt16LE(bitsPerSample, 34);
+
+  // data sub-chunk
+  buffer.write('data', 36);
+  buffer.writeUInt32LE(dataSize, 40);
+
+  // Copy PCM samples
+  pcmBuffer.copy(buffer, 44);
+
+  return buffer;
+}
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -22,6 +59,166 @@ async function startServer() {
   // Health check
   app.get('/api/health', (_req: Request, res: Response) => {
     res.json({ status: 'ok', time: new Date().toISOString() });
+  });
+
+  // Authentic Arabic Speech Generation API using Gemini TTS
+  app.post('/api/tts/arabic', async (req: Request, res: Response) => {
+    try {
+      const { text, voice } = req.body;
+      if (!text || typeof text !== 'string') {
+        res.status(400).json({ error: 'Teks arab diperlukan' });
+        return;
+      }
+
+      const cleanText = text.trim();
+      const voiceName = voice || 'Puck';
+      const cacheKey = `${voiceName}:${cleanText}`;
+
+      if (arabicAudioCache.has(cacheKey)) {
+        const cachedWav = arabicAudioCache.get(cacheKey)!;
+        res.set({
+          'Content-Type': 'audio/wav',
+          'Content-Length': cachedWav.length.toString(),
+          'Cache-Control': 'public, max-age=86400'
+        });
+        res.end(cachedWav);
+        return;
+      }
+
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        res.status(500).json({ error: 'GEMINI_API_KEY belum dikonfigurasi' });
+        return;
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build'
+          }
+        }
+      });
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-flash-tts-preview',
+        contents: [{ parts: [{ text: cleanText }] }],
+        config: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName }
+            }
+          }
+        }
+      });
+
+      const audioPart = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+      if (!audioPart || !audioPart.data) {
+        res.status(500).json({ error: 'Gagal membuat audio lafadz dari AI' });
+        return;
+      }
+
+      const rawPcm = Buffer.from(audioPart.data, 'base64');
+      const wavBuffer = pcmToWav(rawPcm, 24000);
+
+      // Keep cache within reasonable memory limit (max 300 entries)
+      if (arabicAudioCache.size > 300) {
+        const oldestKey = arabicAudioCache.keys().next().value;
+        if (oldestKey) arabicAudioCache.delete(oldestKey);
+      }
+      arabicAudioCache.set(cacheKey, wavBuffer);
+
+      res.set({
+        'Content-Type': 'audio/wav',
+        'Content-Length': wavBuffer.length.toString(),
+        'Cache-Control': 'public, max-age=86400'
+      });
+      res.end(wavBuffer);
+    } catch (err) {
+      console.error('TTS Arabic POST error:', err);
+      res.status(500).json({ error: 'Gagal menghasilkan audio lafadz bahasa Arab' });
+    }
+  });
+
+  // GET version for direct audio element src (/api/tts/arabic?text=...)
+  app.get('/api/tts/arabic', async (req: Request, res: Response) => {
+    try {
+      const text = (req.query.text as string) || '';
+      const voice = (req.query.voice as string) || 'Puck';
+
+      if (!text) {
+        res.status(400).send('Parameter text diperlukan');
+        return;
+      }
+
+      const cleanText = text.trim();
+      const cacheKey = `${voice}:${cleanText}`;
+
+      if (arabicAudioCache.has(cacheKey)) {
+        const cachedWav = arabicAudioCache.get(cacheKey)!;
+        res.set({
+          'Content-Type': 'audio/wav',
+          'Content-Length': cachedWav.length.toString(),
+          'Cache-Control': 'public, max-age=86400'
+        });
+        res.end(cachedWav);
+        return;
+      }
+
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        res.status(500).send('GEMINI_API_KEY belum dikonfigurasi');
+        return;
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build'
+          }
+        }
+      });
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-flash-tts-preview',
+        contents: [{ parts: [{ text: cleanText }] }],
+        config: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: voice }
+            }
+          }
+        }
+      });
+
+      const audioPart = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+      if (!audioPart || !audioPart.data) {
+        res.status(500).send('Gagal membuat audio lafadz');
+        return;
+      }
+
+      const rawPcm = Buffer.from(audioPart.data, 'base64');
+      const wavBuffer = pcmToWav(rawPcm, 24000);
+
+      if (arabicAudioCache.size > 300) {
+        const oldestKey = arabicAudioCache.keys().next().value;
+        if (oldestKey) arabicAudioCache.delete(oldestKey);
+      }
+      arabicAudioCache.set(cacheKey, wavBuffer);
+
+      res.set({
+        'Content-Type': 'audio/wav',
+        'Content-Length': wavBuffer.length.toString(),
+        'Cache-Control': 'public, max-age=86400'
+      });
+      res.end(wavBuffer);
+    } catch (err) {
+      console.error('TTS Arabic GET error:', err);
+      res.status(500).send('Gagal menghasilkan audio');
+    }
   });
 
   // Voice & Tajweed Hafalan AI Testing API

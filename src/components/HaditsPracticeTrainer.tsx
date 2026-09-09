@@ -86,7 +86,7 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
     setIsPlayingAudio(true);
     setPlayingTarget('chunk');
 
-    const stopFn = audioLearningEngine.playSpeechArabic(arabicText, {
+    const stopFn = audioLearningEngine.playArabicText(arabicText, {
       speed: playbackSpeed,
       repeatCount,
       onRepeatProgress: (curr, total) => {
@@ -115,7 +115,7 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
     setIsPlayingAudio(true);
     setPlayingTarget('full');
 
-    const stopFn = audioLearningEngine.playSpeechArabic(fullArabicText, {
+    const stopFn = audioLearningEngine.playArabicText(fullArabicText, {
       speed: playbackSpeed,
       repeatCount,
       onRepeatProgress: (curr, total) => {
@@ -124,7 +124,6 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
       onEnd: () => {
         setIsPlayingAudio(false);
         setPlayingTarget(null);
-        audioEngine.playCelebrationSound();
       },
       onError: () => {
         setIsPlayingAudio(false);

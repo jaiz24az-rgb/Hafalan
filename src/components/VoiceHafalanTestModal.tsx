@@ -32,6 +32,7 @@ import {
   UserProfile
 } from '../types';
 import { audioEngine } from '../utils/soundAndNotification';
+import { audioLearningEngine } from '../utils/audioLearningEngine';
 
 interface VoiceHafalanTestModalProps {
   initialItem?: ChecklistItem | null;
@@ -98,16 +99,51 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
   const animationFrameRef = useRef<number | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const sampleStopRef = useRef<(() => void) | null>(null);
+  const [isPlayingSample, setIsPlayingSample] = useState(false);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopRecordingCleanup();
+      if (sampleStopRef.current) {
+        sampleStopRef.current();
+      }
+      audioLearningEngine.stopAll();
       if (audioUrl) {
         URL.revokeObjectURL(audioUrl);
       }
     };
   }, [audioUrl]);
+
+  const handleTogglePlaySample = () => {
+    if (isPlayingSample) {
+      if (sampleStopRef.current) sampleStopRef.current();
+      audioLearningEngine.stopAll();
+      setIsPlayingSample(false);
+      return;
+    }
+
+    if (!selectedItem.arabic && selectedItem.category !== 'surat') return;
+
+    setIsPlayingSample(true);
+    let stopFn: () => void;
+
+    if (selectedItem.category === 'surat') {
+      const surahNum = selectedItem.number || 1;
+      stopFn = audioLearningEngine.playFullSurah(surahNum, {
+        onEnd: () => setIsPlayingSample(false),
+        onError: () => setIsPlayingSample(false)
+      });
+    } else {
+      stopFn = audioLearningEngine.playArabicText(selectedItem.arabic, {
+        onEnd: () => setIsPlayingSample(false),
+        onError: () => setIsPlayingSample(false)
+      });
+    }
+
+    sampleStopRef.current = stopFn;
+  };
 
   const stopRecordingCleanup = () => {
     if (timerIntervalRef.current) {
@@ -593,15 +629,44 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
             </div>
 
             {/* Target Arabic Preview */}
-            {selectedItem.arabic && (
+            {(selectedItem.arabic || selectedItem.category === 'surat') && (
               <div className="bg-emerald-950/5 p-3 rounded-xl border border-emerald-800/10">
-                <div className="flex items-center justify-between text-[11px] text-emerald-800 font-semibold mb-1">
-                  <span>Teks Asli Rujukan:</span>
-                  {selectedItem.targetRange && <span>{selectedItem.targetRange}</span>}
+                <div className="flex items-center justify-between text-[11px] text-emerald-800 font-semibold mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <span>Teks Asli Rujukan:</span>
+                    {selectedItem.targetRange && (
+                      <span className="bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-normal text-[10px]">
+                        {selectedItem.targetRange}
+                      </span>
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleTogglePlaySample}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      isPlayingSample
+                        ? 'bg-amber-400 text-slate-950 shadow-xs'
+                        : 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                    }`}
+                  >
+                    {isPlayingSample ? (
+                      <>
+                        <Pause className="w-3 h-3 fill-current" />
+                        <span>Hentikan Audio</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="w-3 h-3" />
+                        <span>Dengarkan Bacaan Asli</span>
+                      </>
+                    )}
+                  </button>
                 </div>
-                <p className="font-mushaf arabic-mushaf-text text-lg sm:text-xl text-right text-emerald-950 font-bold">
-                  {selectedItem.arabic}
-                </p>
+                {selectedItem.arabic && (
+                  <p className="font-mushaf arabic-mushaf-text text-lg sm:text-xl text-right text-emerald-950 font-bold">
+                    {selectedItem.arabic}
+                  </p>
+                )}
                 {selectedItem.latin && (
                   <p className="text-xs text-slate-600 italic mt-1 line-clamp-2">
                     "{selectedItem.latin}"

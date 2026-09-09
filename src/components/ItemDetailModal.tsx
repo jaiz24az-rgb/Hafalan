@@ -202,19 +202,35 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
       return;
     }
 
-    if (!item.arabic) return;
+    if (!item.arabic && item.category !== 'surat') return;
 
     setIsPlayingAudio(true);
-    const stopFn = audioLearningEngine.playSpeechArabic(item.arabic, {
-      speed,
-      repeatCount: repeat,
-      onRepeatProgress: (c, t) => setCurrentRep({ current: c, total: t }),
-      onEnd: () => {
-        setIsPlayingAudio(false);
-        audioEngine.playChime();
-      },
-      onError: () => setIsPlayingAudio(false)
-    });
+    let stopFn: () => void;
+
+    if (item.category === 'surat') {
+      stopFn = audioLearningEngine.playFullSurah(surahNumber, {
+        speed,
+        onEnd: () => {
+          setIsPlayingAudio(false);
+        },
+        onError: () => {
+          setIsPlayingAudio(false);
+        }
+      });
+    } else {
+      stopFn = audioLearningEngine.playArabicText(item.arabic, {
+        speed,
+        repeatCount: repeat,
+        onRepeatProgress: (c, t) => setCurrentRep({ current: c, total: t }),
+        onEnd: () => {
+          setIsPlayingAudio(false);
+        },
+        onError: () => {
+          setIsPlayingAudio(false);
+        }
+      });
+    }
+
     stopAudioRef.current = stopFn;
   };
 
@@ -375,80 +391,110 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
               )}
 
               {/* Audio Player Toolbar for Overview */}
-              {item.arabic && (
-                <div className="bg-slate-900 text-white p-3.5 rounded-2xl border border-emerald-700/40 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-emerald-600/30 text-emerald-300">
-                      <Headphones className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold text-emerald-200 flex items-center gap-1">
-                        Contoh Audio Pelafalan
-                      </span>
-                      <p className="text-[10px] text-slate-300">
-                        Dengarkan contoh bacaan makhraj & harakat
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {/* Speed */}
-                    <div className="flex items-center gap-1 bg-emerald-950 p-1 rounded-lg border border-emerald-700/40 text-xs">
-                      <Gauge className="w-3 h-3 text-emerald-400" />
-                      {([0.75, 1.0] as PlaybackSpeed[]).map((s) => (
-                        <button
-                          key={`ov-spd-${s}`}
-                          type="button"
-                          onClick={() => setSpeed(s)}
-                          className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
-                            speed === s ? 'bg-amber-400 text-slate-950' : 'text-slate-300'
-                          }`}
-                        >
-                          {s === 0.75 ? '0.75x' : '1.0x'}
-                        </button>
-                      ))}
+              {(item.arabic || item.category === 'surat') && (
+                <div className="bg-slate-900 text-white p-3.5 rounded-2xl border border-emerald-700/40 shadow-sm flex flex-col gap-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-1.5 rounded-lg ${isPlayingAudio ? 'bg-amber-400 text-slate-950 animate-bounce' : 'bg-emerald-600/30 text-emerald-300'}`}>
+                        <Headphones className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-emerald-200 flex items-center gap-1.5">
+                          {item.category === 'surat' ? 'Murottal Surat Lengkap' : 'Audio Pelafalan Asli Belajar Hafalan'}
+                        </span>
+                        <p className="text-[10px] text-slate-300">
+                          {item.category === 'surat'
+                            ? 'Murottal tartil jernih Syaikh Misyari Rasyid Al-Afasy'
+                            : 'Dengarkan contoh bacaan makhraj tajwid & harakat yang jelas'}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* Repeat */}
-                    <div className="flex items-center gap-1 bg-emerald-950 p-1 rounded-lg border border-emerald-700/40 text-xs">
-                      <Repeat className="w-3 h-3 text-emerald-400" />
-                      {([1, 3, 5] as RepeatCount[]).map((r) => (
-                        <button
-                          key={`ov-rep-${r}`}
-                          type="button"
-                          onClick={() => setRepeat(r)}
-                          className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
-                            repeat === r ? 'bg-emerald-500 text-white' : 'text-slate-300'
-                          }`}
-                        >
-                          {r}x
-                        </button>
-                      ))}
-                    </div>
+                    <div className="flex items-center gap-2">
+                      {/* Speed */}
+                      <div className="flex items-center gap-1 bg-emerald-950 p-1 rounded-lg border border-emerald-700/40 text-xs">
+                        <Gauge className="w-3 h-3 text-emerald-400" />
+                        {([0.75, 1.0] as PlaybackSpeed[]).map((s) => (
+                          <button
+                            key={`ov-spd-${s}`}
+                            type="button"
+                            onClick={() => setSpeed(s)}
+                            className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
+                              speed === s ? 'bg-amber-400 text-slate-950' : 'text-slate-300'
+                            }`}
+                          >
+                            {s === 0.75 ? '0.75x' : '1.0x'}
+                          </button>
+                        ))}
+                      </div>
 
-                    {/* Play Button */}
-                    <button
-                      type="button"
-                      onClick={handleTogglePlayOverviewSound}
-                      className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        isPlayingAudio
-                          ? 'bg-amber-400 text-slate-950 animate-pulse shadow-md'
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                      }`}
-                    >
-                      {isPlayingAudio ? (
-                        <>
-                          <Pause className="w-3.5 h-3.5 fill-current" />
-                          <span>Jeda</span>
-                        </>
-                      ) : (
-                        <>
-                          <Play className="w-3.5 h-3.5 fill-current" />
-                          <span>Putar Suara</span>
-                        </>
+                      {/* Repeat (for non-surat or single item) */}
+                      {item.category !== 'surat' && (
+                        <div className="flex items-center gap-1 bg-emerald-950 p-1 rounded-lg border border-emerald-700/40 text-xs">
+                          <Repeat className="w-3 h-3 text-emerald-400" />
+                          {([1, 3, 5] as RepeatCount[]).map((r) => (
+                            <button
+                              key={`ov-rep-${r}`}
+                              type="button"
+                              onClick={() => setRepeat(r)}
+                              className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
+                                repeat === r ? 'bg-emerald-500 text-white' : 'text-slate-300'
+                              }`}
+                              title={r > 1 ? `Ulangi lafadz ${r} kali (Metode Tikrar)` : 'Putar 1 kali'}
+                            >
+                              {r}x
+                            </button>
+                          ))}
+                        </div>
                       )}
-                    </button>
+
+                      {/* Play Button */}
+                      <button
+                        type="button"
+                        onClick={handleTogglePlayOverviewSound}
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          isPlayingAudio
+                            ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300'
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                        }`}
+                      >
+                        {isPlayingAudio ? (
+                          <>
+                            <Pause className="w-3.5 h-3.5 fill-current" />
+                            <span>Jeda Audio</span>
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-3.5 h-3.5 fill-current" />
+                            <span>Dengarkan Suara</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
+
+                  {/* Active Playing Banner with Soundwaves */}
+                  {isPlayingAudio && (
+                    <div className="bg-emerald-950/80 border border-emerald-700/60 px-3 py-1.5 rounded-xl flex items-center justify-between text-xs text-emerald-200 animate-fadeIn">
+                      <div className="flex items-center gap-2">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                        <span className="font-semibold text-white">
+                          Sedang diputar: {item.category === 'surat' ? item.title : 'Pelafalan Asli Murottal'}
+                        </span>
+                        {repeat > 1 && item.category !== 'surat' && (
+                          <span className="text-[10px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-bold">
+                            Ulang: {currentRep.current}/{currentRep.total}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-slate-300">
+                        {speed === 0.75 ? 'Tempo 0.75x (Lambat)' : 'Tempo Normal'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
 
