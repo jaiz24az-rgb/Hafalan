@@ -50,12 +50,13 @@ export const HaditsPracticeTrainer: React.FC<HaditsPracticeTrainerProps> = ({
 
   const currentStopFnRef = useRef<(() => void) | null>(null);
 
-  // Fallback chunks if not detailed
-  const chunks = detailed?.chunks || [
-    { step: 1, arabic: item.arabic || '', latin: item.latin || '', translation: item.translation || '' }
-  ];
-
-  const fullArabicText = detailed?.arabicFull || item.arabic || '';
+  // Focus strictly and directly on what is written in the hadith text (item.arabic)
+  const fullArabicText = item.arabic || detailed?.arabicFull || '';
+  const chunks = detailed?.chunks && detailed.chunks.length > 0
+    ? detailed.chunks
+    : [
+        { step: 1, arabic: fullArabicText, latin: item.latin || '', translation: item.translation || '' }
+      ];
 
   useEffect(() => {
     return () => {

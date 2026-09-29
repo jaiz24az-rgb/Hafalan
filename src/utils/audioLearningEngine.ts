@@ -1,5 +1,7 @@
 // Audio Learning Engine for Quran Murottal, Hadith Recitations & Doa
-// Integrates EveryAyah CDN, QuranicAudio, and High-Clarity Gemini Arabic Audio TTS
+// Integrates EveryAyah CDN, QuranicAudio, Hisnul Muslim Qari Audio, and Gemini Qari Tartil TTS
+
+import { getAuthenticAudioEntry, AuthenticAudioEntry } from '../data/authenticAudioMap';
 
 export interface QariOption {
   id: string;
@@ -93,7 +95,7 @@ export interface AudioPlaybackOptions {
   qariFolder?: string;
   speed?: PlaybackSpeed;
   repeatCount?: RepeatCount;
-  voiceName?: 'Puck' | 'Charon' | 'Kore' | 'Fenrir' | 'Zephyr';
+  voiceName?: 'Charon' | 'Fenrir' | 'Aoede' | 'Kore' | 'Puck' | 'Zephyr';
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (err: unknown) => void;
@@ -131,14 +133,89 @@ export class AudioLearningEngine {
       this.currentAudio = null;
     }
 
-    if ('speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.cancel();
-      } catch {
-        // ignore
-      }
-    }
     this.isSpeakingSpeech = false;
+  }
+
+  // Play direct audio URL (e.g. from Hisnul Muslim Qari or QuranicAudio CDN) with full repeat and speed support
+  public playDirectAudioUrl(
+    audioUrl: string,
+    options: AudioPlaybackOptions = {}
+  ): () => void {
+    this.stopAll();
+
+    const {
+      speed = 1.0,
+      repeatCount = 1,
+      onStart,
+      onEnd,
+      onError,
+      onRepeatProgress
+    } = options;
+
+    const audio = new Audio(audioUrl);
+    this.currentAudio = audio;
+    audio.playbackRate = speed;
+
+    let playedTimes = 0;
+    const targetRep = repeatCount === 999 ? Infinity : repeatCount;
+    let hasStarted = false;
+
+    const playNext = () => {
+      if (this.currentAudio !== audio) return;
+
+      playedTimes++;
+      if (onRepeatProgress) {
+        onRepeatProgress(playedTimes, repeatCount === 999 ? 999 : repeatCount);
+      }
+
+      audio.currentTime = 0;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('Direct audio play error:', err);
+          if (onError) onError(err);
+        });
+      }
+    };
+
+    audio.onplay = () => {
+      if (!hasStarted) {
+        hasStarted = true;
+        if (onStart) onStart();
+      }
+    };
+
+    audio.onended = () => {
+      if (this.currentAudio !== audio) return;
+
+      if (playedTimes < targetRep) {
+        setTimeout(() => {
+          if (this.currentAudio === audio) {
+            playNext();
+          }
+        }, 600);
+      } else {
+        this.currentAudio = null;
+        if (onEnd) onEnd();
+      }
+    };
+
+    audio.onerror = (e) => {
+      console.warn('Audio stream failed for:', audioUrl, e);
+      if (this.currentAudio === audio) {
+        this.currentAudio = null;
+      }
+      if (onError) onError(e);
+    };
+
+    playNext();
+
+    return () => {
+      audio.pause();
+      if (this.currentAudio === audio) {
+        this.currentAudio = null;
+      }
+    };
   }
 
   // Play Ayah using EveryAyah Qari Audio with automatic fallback to high-clarity Arabic TTS
@@ -299,23 +376,30 @@ export class AudioLearningEngine {
     };
   }
 
-  // Play any authentic Arabic text (Doa Sholat, Doa Harian, Hadits) with high-clarity AI Voice
+  // Play any authentic Arabic text (Doa Sholat, Doa Harian, Hadits) with high-clarity Qari Voice
   public playArabicText(
     arabicText: string,
-    options: AudioPlaybackOptions = {}
+    options: AudioPlaybackOptions = {},
+    itemId?: string
   ): () => void {
     this.stopAll();
 
-    const cleanText = arabicText ? arabicText.trim() : '';
+    const cleanText = arabicText ? arabicText.replace(/\[[^\]]*\]/g, ' ').replace(/\s+/g, ' ').trim() : '';
     if (!cleanText) {
       if (options.onError) options.onError(new Error('Teks Arab kosong'));
       return () => {};
     }
 
+    // 1. Check if there is an authentic human Qari audio file mapped for this item
+    const authenticEntry = getAuthenticAudioEntry(itemId, cleanText);
+    if (authenticEntry && authenticEntry.audioUrl) {
+      return this.playDirectAudioUrl(authenticEntry.audioUrl, options);
+    }
+
     const {
       speed = 1.0,
       repeatCount = 1,
-      voiceName = 'Puck',
+      voiceName = 'Charon',
       onStart,
       onEnd,
       onError,
@@ -325,7 +409,7 @@ export class AudioLearningEngine {
     const abortController = new AbortController();
     this.activeAbortController = abortController;
 
-    const cacheKey = `${voiceName}:${cleanText}`;
+    const cacheKey = `v2:${voiceName}:${cleanText}`;
 
     const playWithAudioElement = (audioSrc: string) => {
       if (abortController.signal.aborted) return;
@@ -350,8 +434,8 @@ export class AudioLearningEngine {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch((err) => {
-            console.warn('Audio element play error, falling back to Web Speech:', err);
-            this.playSpeechSynthesisArabic(cleanText, options);
+            console.warn('Audio playback error:', err);
+            if (onError) onError(err);
           });
         }
       };
@@ -379,8 +463,11 @@ export class AudioLearningEngine {
       };
 
       audio.onerror = (e) => {
-        console.warn('Audio element failed, falling back to Web Speech:', e);
-        this.playSpeechSynthesisArabic(cleanText, options);
+        console.warn('Audio element error:', e);
+        if (this.currentAudio === audio) {
+          this.currentAudio = null;
+        }
+        if (onError) onError(e);
       };
 
       playNext();
@@ -398,7 +485,7 @@ export class AudioLearningEngine {
       };
     }
 
-    // Fetch from high quality server TTS endpoint
+    // Fetch from high quality server Qari Tartil TTS endpoint
     fetch('/api/tts/arabic', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -418,8 +505,8 @@ export class AudioLearningEngine {
       })
       .catch((err) => {
         if (abortController.signal.aborted) return;
-        console.warn('Fetch Arabic audio failed, falling back to Web Speech Synthesis:', err);
-        this.playSpeechSynthesisArabic(cleanText, options);
+        console.warn('Fetch Arabic Qari audio failed:', err);
+        if (onError) onError(err);
       });
 
     return () => {
@@ -428,106 +515,52 @@ export class AudioLearningEngine {
     };
   }
 
-  // Fallback using Browser Speech Synthesis with async voice matching
-  public playSpeechSynthesisArabic(
-    arabicText: string,
+  // Universal Player for any Checklist Item (Surah, Doa Sholat, Doa Harian, Hadits)
+  public playItem(
+    item: { id?: string; category?: string; number?: number; arabic?: string; title?: string },
     options: AudioPlaybackOptions = {}
   ): () => void {
-    if (!('speechSynthesis' in window)) {
-      if (options.onError) options.onError(new Error('Browser tidak mendukung Speech Synthesis'));
-      return () => {};
+    if (item.category === 'surat') {
+      const surahNum = item.number || 78;
+      return this.playFullSurah(surahNum, options);
     }
 
-    const {
-      speed = 1.0,
-      repeatCount = 1,
-      onStart,
-      onEnd,
-      onError,
-      onRepeatProgress
-    } = options;
+    return this.playArabicText(item.arabic || '', options, item.id);
+  }
 
-    let currentRep = 0;
-    const targetRep = repeatCount === 999 ? Infinity : repeatCount;
-    this.isSpeakingSpeech = true;
+  // Returns true if authentic recorded human Qari audio exists
+  public isAuthenticQariRecording(item: { id?: string; category?: string; arabic?: string }): boolean {
+    if (item.category === 'surat') return true;
+    return getAuthenticAudioEntry(item.id, item.arabic) !== null;
+  }
 
-    const findArabicVoice = (): SpeechSynthesisVoice | null => {
-      const voices = window.speechSynthesis.getVoices();
-      return (
-        voices.find(
-          (v) =>
-            v.lang.startsWith('ar') ||
-            v.name.toLowerCase().includes('arabic') ||
-            v.name.toLowerCase().includes('maged') ||
-            v.name.toLowerCase().includes('tariq') ||
-            v.name.toLowerCase().includes('laila')
-        ) || null
-      );
-    };
-
-    const speakOnce = () => {
-      if (!this.isSpeakingSpeech) return;
-      currentRep++;
-
-      if (onRepeatProgress) {
-        onRepeatProgress(currentRep, repeatCount === 999 ? 999 : repeatCount);
-      }
-
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(arabicText);
-      utterance.lang = 'ar-SA';
-      utterance.rate = speed === 0.75 ? 0.75 : speed === 1.25 ? 1.05 : 0.85;
-      utterance.pitch = 1.05;
-
-      const voice = findArabicVoice();
-      if (voice) {
-        utterance.voice = voice;
-      }
-
-      utterance.onstart = () => {
-        if (currentRep === 1 && onStart) onStart();
+  // Get metadata about the reciter and audio source for display in UI
+  public getAudioMeta(item: { id?: string; category?: string; number?: number; arabic?: string; title?: string }): {
+    isAuthenticHuman: boolean;
+    reciter: string;
+    description: string;
+  } {
+    if (item.category === 'surat') {
+      return {
+        isAuthenticHuman: true,
+        reciter: 'Syaikh Misyari Rasyid Al-Afasy & Syaikh Al-Minsyawi',
+        description: 'Murottal Al-Qur’an Resmi Berstandar Tajwid Internasional'
       };
-
-      utterance.onend = () => {
-        if (!this.isSpeakingSpeech) return;
-        if (currentRep < targetRep) {
-          setTimeout(() => {
-            if (this.isSpeakingSpeech) speakOnce();
-          }, 600);
-        } else {
-          this.isSpeakingSpeech = false;
-          if (onEnd) onEnd();
-        }
-      };
-
-      utterance.onerror = (e) => {
-        console.warn('SpeechSynthesis error:', e);
-        this.isSpeakingSpeech = false;
-        if (onError) onError(e);
-      };
-
-      window.speechSynthesis.speak(utterance);
-    };
-
-    // If voices are not yet loaded, wait for voiceschanged
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.onvoiceschanged = null;
-        speakOnce();
-      };
-      // Timeout fallback in case voiceschanged never fires
-      setTimeout(() => {
-        if (this.isSpeakingSpeech && currentRep === 0) {
-          speakOnce();
-        }
-      }, 250);
-    } else {
-      speakOnce();
     }
 
-    return () => {
-      this.isSpeakingSpeech = false;
-      window.speechSynthesis.cancel();
+    const authentic = getAuthenticAudioEntry(item.id, item.arabic);
+    if (authentic) {
+      return {
+        isAuthenticHuman: true,
+        reciter: authentic.reciter,
+        description: `Pelafalan Asli Sunnah: ${authentic.sourceTitle}`
+      };
+    }
+
+    return {
+      isAuthenticHuman: false,
+      reciter: 'Qari Tartil Bertajwid (Karakter Syaikh Khusyuk & Berwibawa)',
+      description: 'Lafadz Tartil Fashahah Tajwid dengan Waqaf & Makhraj Jelas'
     };
   }
 }

@@ -127,20 +127,10 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
     if (!selectedItem.arabic && selectedItem.category !== 'surat') return;
 
     setIsPlayingSample(true);
-    let stopFn: () => void;
-
-    if (selectedItem.category === 'surat') {
-      const surahNum = selectedItem.number || 1;
-      stopFn = audioLearningEngine.playFullSurah(surahNum, {
-        onEnd: () => setIsPlayingSample(false),
-        onError: () => setIsPlayingSample(false)
-      });
-    } else {
-      stopFn = audioLearningEngine.playArabicText(selectedItem.arabic, {
-        onEnd: () => setIsPlayingSample(false),
-        onError: () => setIsPlayingSample(false)
-      });
-    }
+    const stopFn = audioLearningEngine.playItem(selectedItem, {
+      onEnd: () => setIsPlayingSample(false),
+      onError: () => setIsPlayingSample(false)
+    });
 
     sampleStopRef.current = stopFn;
   };

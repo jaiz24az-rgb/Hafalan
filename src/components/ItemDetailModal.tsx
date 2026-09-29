@@ -205,34 +205,23 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
     if (!item.arabic && item.category !== 'surat') return;
 
     setIsPlayingAudio(true);
-    let stopFn: () => void;
-
-    if (item.category === 'surat') {
-      stopFn = audioLearningEngine.playFullSurah(surahNumber, {
-        speed,
-        onEnd: () => {
-          setIsPlayingAudio(false);
-        },
-        onError: () => {
-          setIsPlayingAudio(false);
-        }
-      });
-    } else {
-      stopFn = audioLearningEngine.playArabicText(item.arabic, {
-        speed,
-        repeatCount: repeat,
-        onRepeatProgress: (c, t) => setCurrentRep({ current: c, total: t }),
-        onEnd: () => {
-          setIsPlayingAudio(false);
-        },
-        onError: () => {
-          setIsPlayingAudio(false);
-        }
-      });
-    }
+    const stopFn = audioLearningEngine.playItem(item, {
+      speed,
+      repeatCount: repeat,
+      onRepeatProgress: (c, t) => setCurrentRep({ current: c, total: t }),
+      onEnd: () => {
+        setIsPlayingAudio(false);
+      },
+      onError: (err) => {
+        console.warn('Audio playback error:', err);
+        setIsPlayingAudio(false);
+      }
+    });
 
     stopAudioRef.current = stopFn;
   };
+
+  const audioMeta = audioLearningEngine.getAudioMeta(item);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
@@ -399,13 +388,20 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                         <Headphones className="w-4 h-4" />
                       </div>
                       <div>
-                        <span className="text-xs font-bold text-emerald-200 flex items-center gap-1.5">
-                          {item.category === 'surat' ? 'Murottal Surat Lengkap' : 'Audio Pelafalan Asli Belajar Hafalan'}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-emerald-200">
+                            {item.category === 'surat'
+                              ? 'Murottal Surat Lengkap (Qari Asli)'
+                              : audioMeta.isAuthenticHuman
+                              ? 'Audio Pelafalan Qari Sunnah'
+                              : 'Audio Tartil Fashahah Tajwid'}
+                          </span>
+                          <span className="text-[10px] bg-emerald-700/80 text-emerald-100 px-1.5 py-0.2 rounded font-medium">
+                            {audioMeta.isAuthenticHuman ? 'Suara Asli' : 'Tartil Tajwid'}
+                          </span>
+                        </div>
                         <p className="text-[10px] text-slate-300">
-                          {item.category === 'surat'
-                            ? 'Murottal tartil jernih Syaikh Misyari Rasyid Al-Afasy'
-                            : 'Dengarkan contoh bacaan makhraj tajwid & harakat yang jelas'}
+                          {audioMeta.reciter}
                         </p>
                       </div>
                     </div>

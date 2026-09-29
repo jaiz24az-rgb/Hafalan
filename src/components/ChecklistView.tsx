@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Check,
   Search,
@@ -10,12 +10,14 @@ import {
   CheckCircle2,
   Clock,
   Volume2,
+  Square,
   Mic,
   Award,
   Sparkles
 } from 'lucide-react';
 import { ChecklistItem, CompletionStatus, DayRecord, ItemProgress } from '../types';
 import { audioEngine } from '../utils/soundAndNotification';
+import { audioLearningEngine } from '../utils/audioLearningEngine';
 
 interface ChecklistViewProps {
   items: ChecklistItem[];
@@ -41,6 +43,39 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'uncompleted' | 'completed'>('all');
+  const [playingItemId, setPlayingItemId] = useState<string | null>(null);
+  const stopAudioRef = useRef<(() => void) | null>(null);
+
+  // Stop audio on unmount or tab switch
+  useEffect(() => {
+    return () => {
+      if (stopAudioRef.current) stopAudioRef.current();
+      audioLearningEngine.stopAll();
+    };
+  }, []);
+
+  const handleTogglePlayItem = (item: ChecklistItem) => {
+    if (playingItemId === item.id) {
+      if (stopAudioRef.current) stopAudioRef.current();
+      audioLearningEngine.stopAll();
+      setPlayingItemId(null);
+      return;
+    }
+
+    if (stopAudioRef.current) stopAudioRef.current();
+    audioLearningEngine.stopAll();
+    setPlayingItemId(item.id);
+
+    const stopFn = audioLearningEngine.playItem(item, {
+      onEnd: () => setPlayingItemId(null),
+      onError: (err) => {
+        console.warn('Playback error for item:', item.title, err);
+        setPlayingItemId(null);
+      }
+    });
+
+    stopAudioRef.current = stopFn;
+  };
 
   // Filter items
   const filteredItems = items.filter((item) => {
@@ -400,16 +435,28 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                       </button>
                     )}
 
-                    {item.arabic && (
+                    {(item.arabic || item.category === 'surat') && (
                       <button
-                        onClick={() => {
-                          audioEngine.playChime();
-                          onOpenDetailModal(item);
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTogglePlayItem(item);
                         }}
-                        className="p-1 text-slate-500 hover:text-emerald-700 hover:bg-slate-100 rounded-md transition-colors"
-                        title="Dengarkan / Baca Teks"
+                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                          playingItemId === item.id
+                            ? 'bg-amber-400 text-slate-950 ring-2 ring-amber-300 shadow-xs animate-pulse'
+                            : 'text-slate-500 hover:text-emerald-700 hover:bg-emerald-50'
+                        }`}
+                        title={
+                          playingItemId === item.id
+                            ? 'Hentikan Pemutaran Suara'
+                            : 'Dengarkan Pelafalan Asli Bertajwid'
+                        }
                       >
-                        <Volume2 className="w-3.5 h-3.5" />
+                        {playingItemId === item.id ? (
+                          <Square className="w-3.5 h-3.5 fill-current" />
+                        ) : (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        )}
                       </button>
                     )}
                     <button

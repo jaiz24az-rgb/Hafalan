@@ -62,6 +62,101 @@ async function startServer() {
   });
 
   // Authentic Arabic Speech Generation API using Gemini TTS
+  // Clean Arabic text so TTS models focus strictly and verbatim on the written Arabic text
+  function cleanArabicForRecitation(text: string): string {
+    if (!text || typeof text !== 'string') return '';
+    // Strip bracketed instructions like [slow], [reverent], [melodic], [short pause], (..), {..}
+    let cleaned = text
+      .replace(/\[[^\]]*\]/g, ' ')
+      .replace(/\([^\)]*\)/g, ' ')
+      .replace(/\{[^\}]*\}/g, ' ');
+
+    // Strip English/Latin letters so the TTS model never speaks stray English words
+    cleaned = cleaned.replace(/[a-zA-Z]/g, ' ');
+
+    // Strip characters that might be spoken as symbols
+    cleaned = cleaned.replace(/[#*_~`^+=|\\<>]/g, ' ');
+
+    // Normalize spacing while preserving Arabic letters, harakat (tashkeel), and punctuation
+    return cleaned.replace(/\s+/g, ' ').trim();
+  }
+
+  // Generate authentic Qari recitation audio using Gemini TTS
+  async function generateQariAudio(ai: GoogleGenAI, text: string, voiceName: string): Promise<Buffer> {
+    const cleanArabicText = cleanArabicForRecitation(text);
+    if (!cleanArabicText) {
+      throw new Error('Teks Arab kosong setelah dibersihkan');
+    }
+
+    // Try gemini-3.8-flash-lite-tts first (high throughput, standard TTS voice, fast response)
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash-lite-tts',
+        contents: [{ parts: [{ text: cleanArabicText }] }],
+        config: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName }
+            }
+          }
+        }
+      });
+      const audioPart = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+      if (audioPart && audioPart.data) {
+        const rawPcm = Buffer.from(audioPart.data, 'base64');
+        return pcmToWav(rawPcm, 24000);
+      }
+    } catch (primaryErr) {
+      console.warn('gemini-3.8-flash-lite-tts error, trying gemini-3.8-flash-tts:', primaryErr);
+    }
+
+    // Fallback 1: gemini-3.8-flash-tts
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash-tts',
+        contents: [{ parts: [{ text: cleanArabicText }] }],
+        config: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName }
+            }
+          }
+        }
+      });
+      const audioPart = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+      if (audioPart && audioPart.data) {
+        const rawPcm = Buffer.from(audioPart.data, 'base64');
+        return pcmToWav(rawPcm, 24000);
+      }
+    } catch (secErr) {
+      console.warn('gemini-3.8-flash-tts error, trying gemini-3.1-flash-tts-preview:', secErr);
+    }
+
+    // Fallback 2: gemini-3.1-flash-tts-preview with clean Arabic text
+    const fallbackResponse = await ai.models.generateContent({
+      model: 'gemini-3.1-flash-tts-preview',
+      contents: [{ parts: [{ text: cleanArabicText }] }],
+      config: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName }
+          }
+        }
+      }
+    });
+
+    const fallbackPart = fallbackResponse.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+    if (!fallbackPart || !fallbackPart.data) {
+      throw new Error('Gagal menghasilkan audio lafadz dari Gemini TTS');
+    }
+
+    const rawPcm = Buffer.from(fallbackPart.data, 'base64');
+    return pcmToWav(rawPcm, 24000);
+  }
+
   app.post('/api/tts/arabic', async (req: Request, res: Response) => {
     try {
       const { text, voice } = req.body;
@@ -70,9 +165,14 @@ async function startServer() {
         return;
       }
 
-      const cleanText = text.trim();
-      const voiceName = voice || 'Puck';
-      const cacheKey = `${voiceName}:${cleanText}`;
+      const cleanText = cleanArabicForRecitation(text);
+      if (!cleanText) {
+        res.status(400).json({ error: 'Teks arab kosong' });
+        return;
+      }
+
+      const voiceName = voice || 'Charon';
+      const cacheKey = `v2:${voiceName}:${cleanText}`;
 
       if (arabicAudioCache.has(cacheKey)) {
         const cachedWav = arabicAudioCache.get(cacheKey)!;
@@ -100,30 +200,10 @@ async function startServer() {
         }
       });
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-tts-preview',
-        contents: [{ parts: [{ text: cleanText }] }],
-        config: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName }
-            }
-          }
-        }
-      });
+      const wavBuffer = await generateQariAudio(ai, cleanText, voiceName);
 
-      const audioPart = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-      if (!audioPart || !audioPart.data) {
-        res.status(500).json({ error: 'Gagal membuat audio lafadz dari AI' });
-        return;
-      }
-
-      const rawPcm = Buffer.from(audioPart.data, 'base64');
-      const wavBuffer = pcmToWav(rawPcm, 24000);
-
-      // Keep cache within reasonable memory limit (max 300 entries)
-      if (arabicAudioCache.size > 300) {
+      // Keep cache within reasonable memory limit (max 500 entries)
+      if (arabicAudioCache.size > 500) {
         const oldestKey = arabicAudioCache.keys().next().value;
         if (oldestKey) arabicAudioCache.delete(oldestKey);
       }
@@ -145,15 +225,20 @@ async function startServer() {
   app.get('/api/tts/arabic', async (req: Request, res: Response) => {
     try {
       const text = (req.query.text as string) || '';
-      const voice = (req.query.voice as string) || 'Puck';
+      const voice = (req.query.voice as string) || 'Charon';
 
       if (!text) {
         res.status(400).send('Parameter text diperlukan');
         return;
       }
 
-      const cleanText = text.trim();
-      const cacheKey = `${voice}:${cleanText}`;
+      const cleanText = cleanArabicForRecitation(text);
+      if (!cleanText) {
+        res.status(400).send('Parameter text kosong');
+        return;
+      }
+
+      const cacheKey = `v2:${voice}:${cleanText}`;
 
       if (arabicAudioCache.has(cacheKey)) {
         const cachedWav = arabicAudioCache.get(cacheKey)!;
@@ -181,29 +266,9 @@ async function startServer() {
         }
       });
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-tts-preview',
-        contents: [{ parts: [{ text: cleanText }] }],
-        config: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: voice }
-            }
-          }
-        }
-      });
+      const wavBuffer = await generateQariAudio(ai, cleanText, voice);
 
-      const audioPart = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-      if (!audioPart || !audioPart.data) {
-        res.status(500).send('Gagal membuat audio lafadz');
-        return;
-      }
-
-      const rawPcm = Buffer.from(audioPart.data, 'base64');
-      const wavBuffer = pcmToWav(rawPcm, 24000);
-
-      if (arabicAudioCache.size > 300) {
+      if (arabicAudioCache.size > 500) {
         const oldestKey = arabicAudioCache.keys().next().value;
         if (oldestKey) arabicAudioCache.delete(oldestKey);
       }
