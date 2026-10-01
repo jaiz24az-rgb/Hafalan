@@ -33,6 +33,8 @@ import {
   RepeatCount,
   getQuranAyahAudioUrl
 } from '../utils/audioLearningEngine';
+import { ArabicFontSize } from '../utils/arabicFontSettings';
+import { ArabicFontSizeControl } from './ArabicFontSizeControl';
 
 interface SuratAyatTrackerProps {
   surahTitle: string;
@@ -46,6 +48,8 @@ interface SuratAyatTrackerProps {
   onSelectAllAyahs: () => void;
   onClearAllAyahs: () => void;
   onOpenVoiceTestRange?: (startAyah: number, endAyah: number) => void;
+  arabicFontSize?: ArabicFontSize;
+  onArabicFontSizeChange?: (size: ArabicFontSize) => void;
 }
 
 export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
@@ -59,7 +63,9 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
   onSetBatchAyahs,
   onSelectAllAyahs,
   onClearAllAyahs,
-  onOpenVoiceTestRange
+  onOpenVoiceTestRange,
+  arabicFontSize,
+  onArabicFontSizeChange
 }) => {
   const [hideArabicAll, setHideArabicAll] = useState(false);
   const [hideTranslationAll, setHideTranslationAll] = useState(false);
@@ -547,8 +553,15 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
           </button>
         </div>
 
-        {/* Hide/Show Toggles */}
-        <div className="flex items-center gap-1.5">
+        {/* Hide/Show Toggles & Font Size Control */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {onArabicFontSizeChange && (
+            <ArabicFontSizeControl
+              currentSize={arabicFontSize || 'besar'}
+              onSizeChange={onArabicFontSizeChange}
+              variant="compact"
+            />
+          )}
           <button
             type="button"
             onClick={() => setHideArabicAll(!hideArabicAll)}
@@ -678,13 +691,13 @@ export const SuratAyatTracker: React.FC<SuratAyatTrackerProps> = ({
                 </div>
               ) : (
                 <p
-                  className={`font-mushaf arabic-mushaf-text text-xl sm:text-2xl text-right font-bold my-1 tracking-wide transition-colors ${
+                  className={`font-mushaf arabic-mushaf-text arabic-detail-text text-right font-bold my-2 tracking-wide transition-colors ${
                     isPlaying ? 'text-amber-950' : 'text-emerald-950'
                   }`}
                 >
                   {ayah.arabic}{' '}
                   <span
-                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-sans align-middle ml-2 font-bold ${
+                    className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-sans align-middle ml-2 font-bold ${
                       isPlaying
                         ? 'bg-amber-400 text-amber-950 ring-2 ring-amber-300'
                         : 'bg-emerald-100 text-emerald-800 border border-emerald-300'

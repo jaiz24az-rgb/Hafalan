@@ -50,6 +50,12 @@ import { ReportModal } from './components/ReportModal';
 import { AddTaskModal } from './components/AddTaskModal';
 import { StudentProfileModal } from './components/StudentProfileModal';
 import { VoiceHafalanTestModal } from './components/VoiceHafalanTestModal';
+import {
+  ArabicFontSize,
+  loadArabicFontSize,
+  saveArabicFontSize,
+  applyArabicFontSize
+} from './utils/arabicFontSettings';
 
 export default function App() {
   // Today helper
@@ -68,6 +74,17 @@ export default function App() {
   const [customItems, setCustomItems] = useState<ChecklistItem[]>(loadCustomItems);
   const [reminders, setReminders] = useState<ReminderSetting[]>(loadReminders);
   const [selectedCategory, setSelectedCategory] = useState<ItemCategory>('semua');
+  const [arabicFontSize, setArabicFontSize] = useState<ArabicFontSize>(loadArabicFontSize);
+
+  // Sync active Arabic font size with DOM
+  useEffect(() => {
+    applyArabicFontSize(arabicFontSize);
+  }, [arabicFontSize]);
+
+  const handleArabicFontSizeChange = (newSize: ArabicFontSize) => {
+    setArabicFontSize(newSize);
+    saveArabicFontSize(newSize);
+  };
 
   // Modals state
   const [detailModalItem, setDetailModalItem] = useState<ChecklistItem | null>(null);
@@ -432,6 +449,8 @@ export default function App() {
         activeRemindersCount={reminders.filter((r) => r.enabled).length}
         isSyncing={isSyncing}
         syncStatus={syncStatus}
+        arabicFontSize={arabicFontSize}
+        onArabicFontSizeChange={handleArabicFontSizeChange}
       />
 
       {/* Main Container */}
@@ -473,6 +492,8 @@ export default function App() {
           onDeleteItem={handleDeleteCustomTask}
           onOpenDetailModal={(item) => setDetailModalItem(item)}
           onOpenVoiceTestModal={(item) => handleOpenVoiceTestModal(item)}
+          arabicFontSize={arabicFontSize}
+          onArabicFontSizeChange={handleArabicFontSizeChange}
         />
 
       </main>
@@ -536,6 +557,8 @@ export default function App() {
           onClose={() => setDetailModalItem(null)}
           onSaveProgress={handleSaveProgress}
           onOpenVoiceTestModal={(item) => handleOpenVoiceTestModal(item)}
+          arabicFontSize={arabicFontSize}
+          onArabicFontSizeChange={handleArabicFontSizeChange}
         />
       )}
 
@@ -548,6 +571,8 @@ export default function App() {
           currentDate={currentDate}
           onClose={() => setIsVoiceTestModalOpen(false)}
           onSaveTestResult={handleSaveVoiceTestResult}
+          arabicFontSize={arabicFontSize}
+          onArabicFontSizeChange={handleArabicFontSizeChange}
         />
       )}
 

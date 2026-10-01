@@ -27,6 +27,8 @@ import { fetchSurahAyahs } from '../utils/quranApi';
 import { SuratAyatTracker } from './SuratAyatTracker';
 import { HaditsPracticeTrainer } from './HaditsPracticeTrainer';
 import { audioLearningEngine, PlaybackSpeed, RepeatCount } from '../utils/audioLearningEngine';
+import { ArabicFontSize } from '../utils/arabicFontSettings';
+import { ArabicFontSizeControl } from './ArabicFontSizeControl';
 
 interface ItemDetailModalProps {
   item: ChecklistItem | null;
@@ -44,6 +46,8 @@ interface ItemDetailModalProps {
     totalAyahsCount?: number
   ) => void;
   onOpenVoiceTestModal?: (item: ChecklistItem) => void;
+  arabicFontSize?: ArabicFontSize;
+  onArabicFontSizeChange?: (size: ArabicFontSize) => void;
 }
 
 export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
@@ -52,7 +56,9 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
   currentDate,
   onClose,
   onSaveProgress,
-  onOpenVoiceTestModal
+  onOpenVoiceTestModal,
+  arabicFontSize,
+  onArabicFontSizeChange
 }) => {
   if (!item) return null;
 
@@ -322,6 +328,8 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
               onSetBatchAyahs={handleSetBatchAyahs}
               onSelectAllAyahs={handleSelectAllAyahs}
               onClearAllAyahs={handleClearAllAyahs}
+              arabicFontSize={arabicFontSize}
+              onArabicFontSizeChange={onArabicFontSizeChange}
               onOpenVoiceTestRange={(start, end) => {
                 if (onOpenVoiceTestModal) {
                   onClose();
@@ -335,6 +343,8 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           {activeViewTab === 'hadits_practice' && item.category === 'hadits' && (
             <HaditsPracticeTrainer
               item={item}
+              arabicFontSize={arabicFontSize}
+              onArabicFontSizeChange={onArabicFontSizeChange}
               onOpenVoiceTestModal={(it) => {
                 if (onOpenVoiceTestModal) {
                   onClose();
@@ -533,14 +543,23 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                     <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
                       Lafadz / Teks Arab
                     </span>
-                    <button
-                      type="button"
-                      onClick={handleTogglePlayOverviewSound}
-                      className="flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs transition-colors cursor-pointer"
-                    >
-                      <Volume2 className="w-3.5 h-3.5" />
-                      <span>{isPlayingAudio ? 'Sedang Diputar...' : 'Dengarkan'}</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {onArabicFontSizeChange && (
+                        <ArabicFontSizeControl
+                          currentSize={arabicFontSize || 'besar'}
+                          onSizeChange={onArabicFontSizeChange}
+                          variant="compact"
+                        />
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleTogglePlayOverviewSound}
+                        className="flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs transition-colors cursor-pointer"
+                      >
+                        <Volume2 className="w-3.5 h-3.5" />
+                        <span>{isPlayingAudio ? 'Sedang Diputar...' : 'Dengarkan'}</span>
+                      </button>
+                    </div>
                   </div>
 
                   {hideArabic ? (
@@ -548,7 +567,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                       🔒 Teks Arab disembunyikan untuk melatih ingatan hafalan Anda.
                     </div>
                   ) : (
-                    <p className="font-mushaf arabic-mushaf-text text-xl sm:text-2xl text-right text-emerald-950 font-bold tracking-wide">
+                    <p className="font-mushaf arabic-mushaf-text arabic-detail-text text-right text-emerald-950 font-bold tracking-wide">
                       {item.arabic}
                     </p>
                   )}

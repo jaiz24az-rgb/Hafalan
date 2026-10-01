@@ -14,6 +14,8 @@ import {
   Mic
 } from 'lucide-react';
 import { GradeLevel, UserProfile } from '../types';
+import { ArabicFontSize } from '../utils/arabicFontSettings';
+import { ArabicFontSizeControl } from './ArabicFontSizeControl';
 
 interface NavbarProps {
   currentDate: string; // YYYY-MM-DD
@@ -29,6 +31,8 @@ interface NavbarProps {
   activeRemindersCount: number;
   isSyncing: boolean;
   syncStatus: 'synced' | 'local' | 'syncing' | 'error';
+  arabicFontSize?: ArabicFontSize;
+  onArabicFontSizeChange?: (size: ArabicFontSize) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -44,7 +48,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenVoiceTestModal,
   activeRemindersCount,
   isSyncing,
-  syncStatus
+  syncStatus,
+  arabicFontSize,
+  onArabicFontSizeChange
 }) => {
   // Date Helpers
   const shiftDate = (offsetDays: number) => {
@@ -127,6 +133,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Mobile Actions */}
             <div className="flex items-center gap-1 md:hidden">
+              {onArabicFontSizeChange && (
+                <ArabicFontSizeControl
+                  currentSize={arabicFontSize || 'besar'}
+                  onSizeChange={onArabicFontSizeChange}
+                  variant="compact"
+                />
+              )}
               {onOpenVoiceTestModal && (
                 <button
                   id="btn-mobile-voice-test"
@@ -251,6 +264,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <option value="kelas_6">Kelas 6 (Juz 30 Lengkap, Hadits 31-36)</option>
               </select>
             </div>
+
+            {/* Arabic Font Size Control (Desktop) */}
+            {onArabicFontSizeChange && (
+              <ArabicFontSizeControl
+                currentSize={arabicFontSize || 'besar'}
+                onSizeChange={onArabicFontSizeChange}
+                variant="button"
+                className="hidden md:flex"
+              />
+            )}
 
             {/* Desktop Voice Test Button */}
             {onOpenVoiceTestModal && (

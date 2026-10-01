@@ -18,6 +18,8 @@ import {
 import { ChecklistItem, CompletionStatus, DayRecord, ItemProgress } from '../types';
 import { audioEngine } from '../utils/soundAndNotification';
 import { audioLearningEngine } from '../utils/audioLearningEngine';
+import { ArabicFontSize, loadArabicFontSize, saveArabicFontSize } from '../utils/arabicFontSettings';
+import { ArabicFontSizeControl } from './ArabicFontSizeControl';
 
 interface ChecklistViewProps {
   items: ChecklistItem[];
@@ -29,6 +31,8 @@ interface ChecklistViewProps {
   onDeleteItem?: (itemId: string) => void;
   onOpenDetailModal: (item: ChecklistItem) => void;
   onOpenVoiceTestModal?: (item: ChecklistItem) => void;
+  arabicFontSize?: ArabicFontSize;
+  onArabicFontSizeChange?: (size: ArabicFontSize) => void;
 }
 
 export const ChecklistView: React.FC<ChecklistViewProps> = ({
@@ -39,8 +43,21 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
   onUpdateStatus,
   onDeleteItem,
   onOpenDetailModal,
-  onOpenVoiceTestModal
+  onOpenVoiceTestModal,
+  arabicFontSize,
+  onArabicFontSizeChange
 }) => {
+  const [localFontSize, setLocalFontSize] = useState<ArabicFontSize>(loadArabicFontSize);
+  const fontSize = arabicFontSize || localFontSize;
+  const handleFontSizeChange = (size: ArabicFontSize) => {
+    setLocalFontSize(size);
+    if (onArabicFontSizeChange) {
+      onArabicFontSizeChange(size);
+    } else {
+      saveArabicFontSize(size);
+    }
+  };
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'uncompleted' | 'completed'>('all');
   const [playingItemId, setPlayingItemId] = useState<string | null>(null);
@@ -161,7 +178,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
   return (
     <div className="space-y-4">
       {/* Search Bar & Filter Controls */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200/80 shadow-xs">
         {/* Search */}
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -175,8 +192,15 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
           />
         </div>
 
-        {/* Filter & Share Action */}
-        <div className="flex items-center gap-2">
+        {/* Font Size & Filter & Share Action */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Quick Arabic Font Size Setting Control */}
+          <ArabicFontSizeControl
+            currentSize={fontSize}
+            onSizeChange={handleFontSizeChange}
+            variant="toolbar"
+          />
+
           <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
             <button
               id="filter-all"
@@ -317,13 +341,13 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                   {item.arabic && (
                     <div
                       onClick={() => onOpenDetailModal(item)}
-                      className="mt-2.5 p-2 bg-emerald-900/5 hover:bg-emerald-900/10 rounded-lg text-right cursor-pointer border border-emerald-800/10 transition-colors"
+                      className="mt-3 p-3.5 sm:p-4 bg-emerald-950/5 hover:bg-emerald-900/10 rounded-xl text-right cursor-pointer border border-emerald-800/15 transition-all shadow-2xs group"
                     >
-                      <p className="font-mushaf text-sm sm:text-base text-emerald-950 leading-relaxed font-semibold">
-                        {item.arabic.length > 70 ? item.arabic.slice(0, 70) + '...' : item.arabic}
+                      <p className="font-mushaf arabic-mushaf-text arabic-card-snippet text-emerald-950 font-bold tracking-wide group-hover:text-emerald-900 transition-colors">
+                        {item.arabic.length > 120 ? item.arabic.slice(0, 120) + '...' : item.arabic}
                       </p>
                       {item.latin && (
-                        <p className="text-[11px] text-slate-500 text-left mt-1 italic line-clamp-1">
+                        <p className="text-xs sm:text-[13px] text-slate-600 text-left mt-2 italic font-medium line-clamp-2">
                           "{item.latin}"
                         </p>
                       )}

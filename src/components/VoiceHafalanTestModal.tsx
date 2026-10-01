@@ -33,6 +33,8 @@ import {
 } from '../types';
 import { audioEngine } from '../utils/soundAndNotification';
 import { audioLearningEngine } from '../utils/audioLearningEngine';
+import { ArabicFontSize } from '../utils/arabicFontSettings';
+import { ArabicFontSizeControl } from './ArabicFontSizeControl';
 
 interface VoiceHafalanTestModalProps {
   initialItem?: ChecklistItem | null;
@@ -47,6 +49,8 @@ interface VoiceHafalanTestModalProps {
     status: CompletionStatus,
     note: string
   ) => void;
+  arabicFontSize?: ArabicFontSize;
+  onArabicFontSizeChange?: (size: ArabicFontSize) => void;
 }
 
 export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
@@ -55,7 +59,9 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
   profile,
   currentDate,
   onClose,
-  onSaveTestResult
+  onSaveTestResult,
+  arabicFontSize,
+  onArabicFontSizeChange
 }) => {
   // Available recitation items (Surat, Hadits, Doa Harian, Doa Sholat)
   const testableItems = allItems.filter(
@@ -630,30 +636,39 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
                       </span>
                     )}
                   </span>
-                  <button
-                    type="button"
-                    onClick={handleTogglePlaySample}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      isPlayingSample
-                        ? 'bg-amber-400 text-slate-950 shadow-xs'
-                        : 'bg-emerald-700 hover:bg-emerald-800 text-white'
-                    }`}
-                  >
-                    {isPlayingSample ? (
-                      <>
-                        <Pause className="w-3 h-3 fill-current" />
-                        <span>Hentikan Audio</span>
-                      </>
-                    ) : (
-                      <>
-                        <Volume2 className="w-3 h-3" />
-                        <span>Dengarkan Bacaan Asli</span>
-                      </>
+                  <div className="flex items-center gap-2">
+                    {onArabicFontSizeChange && (
+                      <ArabicFontSizeControl
+                        currentSize={arabicFontSize || 'besar'}
+                        onSizeChange={onArabicFontSizeChange}
+                        variant="compact"
+                      />
                     )}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={handleTogglePlaySample}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        isPlayingSample
+                          ? 'bg-amber-400 text-slate-950 shadow-xs'
+                          : 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                      }`}
+                    >
+                      {isPlayingSample ? (
+                        <>
+                          <Pause className="w-3 h-3 fill-current" />
+                          <span>Hentikan Audio</span>
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="w-3 h-3" />
+                          <span>Dengarkan Bacaan Asli</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 {selectedItem.arabic && (
-                  <p className="font-mushaf arabic-mushaf-text text-lg sm:text-xl text-right text-emerald-950 font-bold">
+                  <p className="font-mushaf arabic-mushaf-text arabic-detail-text text-right text-emerald-950 font-bold tracking-wide">
                     {selectedItem.arabic}
                   </p>
                 )}
@@ -1094,7 +1109,7 @@ export const VoiceHafalanTestModal: React.FC<VoiceHafalanTestModalProps> = ({
                     <Volume2 className="w-3.5 h-3.5 text-emerald-600" />
                     Transkripsi Suara Siswa yang Terdeteksi:
                   </h4>
-                  <p className="font-mushaf arabic-mushaf-text text-base sm:text-lg text-right text-emerald-950 font-semibold">
+                  <p className="font-mushaf arabic-mushaf-text arabic-detail-text text-right text-emerald-950 font-bold">
                     {result.transcription}
                   </p>
                 </div>

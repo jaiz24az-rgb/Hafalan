@@ -2,7 +2,39 @@
 
 @layer base {
   :root {
-    --font-mushaf: 'LPMQ IsepMisbah', 'LPMQ Misbah', 'Mushaf Standar Indonesia', 'Kemenag', 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+    --font-mushaf: 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', 'LPMQ IsepMisbah', 'Mushaf Standar Indonesia', serif;
+    --arabic-snippet-size: 1.65rem;
+    --arabic-detail-size: 2.2rem;
+    --arabic-hero-size: 2.85rem;
+    --arabic-line-height: 2.4;
+  }
+
+  [data-arabic-size="normal"] {
+    --arabic-snippet-size: 1.35rem;
+    --arabic-detail-size: 1.75rem;
+    --arabic-hero-size: 2.35rem;
+    --arabic-line-height: 2.25;
+  }
+
+  [data-arabic-size="besar"] {
+    --arabic-snippet-size: 1.65rem;
+    --arabic-detail-size: 2.2rem;
+    --arabic-hero-size: 2.85rem;
+    --arabic-line-height: 2.4;
+  }
+
+  [data-arabic-size="sangat_besar"] {
+    --arabic-snippet-size: 2.05rem;
+    --arabic-detail-size: 2.75rem;
+    --arabic-hero-size: 3.5rem;
+    --arabic-line-height: 2.55;
+  }
+
+  [data-arabic-size="jumbo"] {
+    --arabic-snippet-size: 2.55rem;
+    --arabic-detail-size: 3.35rem;
+    --arabic-hero-size: 4.25rem;
+    --arabic-line-height: 2.7;
   }
 }
 
@@ -10,15 +42,31 @@
 .font-mushaf,
 .font-arabic-mushaf,
 .arabic-mushaf-text {
-  font-family: 'LPMQ IsepMisbah', 'LPMQ Misbah', 'Mushaf Standar Indonesia', 'Kemenag', 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+  font-family: 'Amiri Quran', 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', 'LPMQ IsepMisbah', 'LPMQ Misbah', 'Mushaf Standar Indonesia', 'Kemenag', serif;
   font-feature-settings: "cv01" on, "ss01" on, "liga" on, "calt" on, "kern" on;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 2.3;
+  line-height: var(--arabic-line-height, 2.3);
   direction: rtl;
   text-align: right;
-  word-spacing: 0.12em;
+  word-spacing: 0.14em;
+  letter-spacing: 0.01em;
+}
+
+.arabic-card-snippet {
+  font-size: var(--arabic-snippet-size, 1.65rem) !important;
+  line-height: var(--arabic-line-height, 2.4) !important;
+}
+
+.arabic-detail-text {
+  font-size: var(--arabic-detail-size, 2.2rem) !important;
+  line-height: var(--arabic-line-height, 2.4) !important;
+}
+
+.arabic-hero-text {
+  font-size: var(--arabic-hero-size, 2.85rem) !important;
+  line-height: var(--arabic-line-height, 2.4) !important;
 }
 
 .arabic-inline {
